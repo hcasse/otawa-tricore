@@ -3,7 +3,7 @@ extend jl
 	otawa_target = __IADDR + disp24 * 2
 
 extend call
-	otawa_target = __IADDR - 4 + const
+	otawa_target = __IADDR + const
 
 extend calla
 	otawa_target = const<20..23>::0b0000000::const<0..19>::0b0
@@ -12,7 +12,7 @@ extend calli, ji, ret, ret_16
 	otawa_target = 0
 
 extend j
-	otawa_target = __IADDR - 4 + const
+	otawa_target = __IADDR + const
 
 extend ja
 	otawa_target = const<20..23>::0b0000000::const<16..23>::0b0
@@ -29,19 +29,19 @@ jnei_reg, jnei_const4,
 jnz_a, jnz_t,
 jz_a, jz_t,
 loop
-	otawa_target = __IADDR - 4 + disp
+	otawa_target = __IADDR + disp
 
 extend call16
-	otawa_target = __IADDR - 2 + coerce(int(32), disp)
+	otawa_target = __IADDR + coerce(int(32), disp)
 
 extend j16
-	otawa_target = __IADDR - 2 + const
+	otawa_target = __IADDR + const
 
 extend jeq16_1, jeq16_2, jgez, jgtz, jlez, jltz,
 jne16_const, jne16_reg, jz_t_16, jz_disp8_16, jz_disp4_16,
 loop_16, jnz_16_1, jnz_16_2, jz_a_16, jnz_a_16,
 jnz_t_16
-	otawa_target = __IADDR - 2 + disp
+	otawa_target = __IADDR + disp
 
 extend ji_16
 	otawa_target = addr & 0xfffffffe

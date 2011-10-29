@@ -27,6 +27,7 @@
 extern "C" {
 #	include <tricore/api.h>
 #	include <tricore/config.h>
+#	include <tricore/used_regs.h>
 }
 
 namespace otawa { namespace tricore {
@@ -37,12 +38,12 @@ namespace otawa { namespace tricore {
 /****** Platform definition ******/
 
 // registers
-static const hard::PlainBank regD("D", hard::Register::INT,  32, "d%d", 16);
-static const hard::PlainBank regA("A", hard::Register::ADDR,  32, "a%d", 16);
-static const hard::Register regPSW("PSW", hard::Register::BITS, 32);
-static const hard::Register regPC("PC", hard::Register::ADDR, 32);
-static const hard::Register regFCX("FCX", hard::Register::ADDR, 32);
-static const hard::MeltedBank misc("misc", &regPSW, &regPC,&regFCX, 0);
+static hard::PlainBank regD("D", hard::Register::INT,  32, "d%d", 16);
+static hard::PlainBank regA("A", hard::Register::ADDR,  32, "a%d", 16);
+static hard::Register regPSW("PSW", hard::Register::BITS, 32);
+static hard::Register regPC("PC", hard::Register::ADDR, 32);
+static hard::Register regFCX("FCX", hard::Register::ADDR, 32);
+static hard::MeltedBank misc("misc", &regPSW, &regPC,&regFCX, 0);
 
 static const hard::RegBank *banks[] = {
 	&regD,
@@ -51,6 +52,34 @@ static const hard::RegBank *banks[] = {
 };
 
 static const elm::genstruct::Table<const hard::RegBank *> banks_table(banks, 3);
+
+
+// register decoding
+class RegisterDecoder {
+public:
+	RegisterDecoder(void) {
+		
+		// clear the map
+		for(int i = 0; i < TRICORE_REG_COUNT; i++)
+			map[i] = 0;
+		
+		// initialize it
+		for(int i = 0; i < 16; i++) {
+			map[TRICORE_REG_A(i)] = regA[i];
+			map[TRICORE_REG_D(i)] = regD[i];
+		}
+		map[TRICORE_REG_PSW] = &regPSW;
+		map[TRICORE_REG_PC] = &regPC;
+		map[TRICORE_REG_FCX] = &regFCX;
+	}
+
+	inline hard::Register *operator[](int i) const { return map[i]; }
+	
+private:
+	hard::Register *map[TRICORE_REG_COUNT];
+};
+static RegisterDecoder register_decoder;
+
 
 // platform
 class Platform: public hard::Platform {
@@ -313,40 +342,45 @@ public:
 	}
 
 	// internal work
-#if 0
 	void decodeRegs(Inst *oinst,
-		elm::genstruct::AllocatedTable<hard::Register *> *in,
-		elm::genstruct::AllocatedTable<hard::Register *> *out)
+		elm::genstruct::AllocatedTable<hard::Register *>& in,
+		elm::genstruct::AllocatedTable<hard::Register *>& out)
 	{
 		// Decode instruction
-		arm_inst_t *inst = decode_raw(oinst->address());
-		if(inst->ident == ARM_UNKNOWN) {
+		tricore_inst_t *inst = decode_raw(oinst->address());
+		if(inst->ident == TRICORE_UNKNOWN) {
 			free(inst);
 			return;
 		}
 
 		// get register infos
-		/*elm::genstruct::Vector<hard::Register *> reg_in;
+		tricore_used_regs_read_t rds;
+		tricore_used_regs_write_t wrs;
+		elm::genstruct::Vector<hard::Register *> reg_in;
 		elm::genstruct::Vector<hard::Register *> reg_out;
-		otawa_arm_reg_t *addr_reg_info = arm_used_regs(inst);
-		if(addr_reg_info)
-			for (int i = 0; addr_reg_info[i] != END_REG; i++ )
-				translate_gliss_reg_info(addr_reg_info[i], reg_in, reg_out);*/
+		tricore_used_regs(inst, rds, wrs);
+		for (int i = 0; rds[i] != -1; i++ ) {
+			hard::Register *r = register_decoder[rds[i]];
+			if(r)
+				reg_in.add(r);
+		}
+		for (int i = 0; wrs[i] != -1; i++ ) {
+			hard::Register *r = register_decoder[wrs[i]];
+			if(r)
+				reg_out.add(r);
+		}
 
 		// store results
-		/*int cpt_in = reg_in.length();
-		in->allocate(cpt_in);
-		for (int i = 0 ; i < cpt_in ; i++)
-			in->set(i, reg_in.get(i));
-		int cpt_out = reg_out.length();
-		out->allocate(cpt_out);
-		for (int i = 0 ; i < cpt_out ; i++)
-			out->set(i, reg_out.get(i));*/
+		in.allocate(reg_in.length());
+		for(int i = 0 ; i < reg_in.length(); i++)
+			in.set(i, reg_in.get(i));
+		out.allocate(reg_out.length());
+		for (int i = 0 ; i < reg_out.length(); i++)
+			out.set(i, reg_out.get(i));
 
 		// Free instruction
 		free(inst);
 	}
-#endif
 
 	otawa::Inst *decode(Address addr) {
 		tricore_inst_t *inst = decode_raw(addr);
@@ -466,7 +500,7 @@ private:
 
 t::size Inst::size() const {
 	tricore_inst_t *inst = proc.decode_raw(_addr);
-	int res = tricore_get_inst_size(inst);
+	int res = tricore_get_inst_size(inst) / 8;
 	proc.free(inst);
 	return res;
 }
@@ -480,35 +514,7 @@ void Inst::dump(io::Output& out) {
 }
 
 void Inst::decodeRegs(void) {
-
-	// Decode instruction
-	tricore_inst_t *inst = proc.decode_raw(address());
-	if(inst->ident == TRICORE_UNKNOWN) {
-		proc.free(inst);
-		return;
-	}
-
-	// get register infos
-	/*elm::genstruct::Vector<hard::Register *> reg_in;
-	elm::genstruct::Vector<hard::Register *> reg_out;
-	otawa_arm_reg_t *addr_reg_info = arm_used_regs(inst);
-	if(addr_reg_info)
-		for (int i = 0; addr_reg_info[i] != END_REG; i++ )
-			translate_gliss_reg_info(addr_reg_info[i], reg_in, reg_out);*/
-
-	// store results
-	/*int cpt_in = reg_in.length();
-	in->allocate(cpt_in);
-	for (int i = 0 ; i < cpt_in ; i++)
-		in->set(i, reg_in.get(i));
-	int cpt_out = reg_out.length();
-	out->allocate(cpt_out);
-	for (int i = 0 ; i < cpt_out ; i++)
-		out->set(i, reg_out.get(i));*/
-
-	// Free instruction
-	proc.free(inst);
-
+	proc.decodeRegs(this, in_regs, out_regs);
 }
 
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-set(CMAKE_INSTALL_RPATH "\\$ORIGIN/../../lib")
+set(CMAKE_INSTALL_RPATH "\\$ORIGIN/../..")
 
 # configuration
 set(TARGET_PATH	"${CMAKE_SOURCE_DIR}/../tricore/" CACHE PATH "tricore GLISS2 directory")

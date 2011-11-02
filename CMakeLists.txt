@@ -24,16 +24,14 @@ set(TARGET_IRG		"${TARGET_PATH}/${TARGET}.irg")
 set(GLISS_ATTR		"${GLISS_PATH}/gep/gliss-attr")
 set(OTAWA_KIND 		"${PROJECT_BINARY_DIR}/kind.h")
 set(OTAWA_TARGET 	"${PROJECT_BINARY_DIR}/target.h")
-set(OTAWA_USED_REGS "${PROJECT_BINARY_DIR}/otawa_used_regs.h")
-set(OTAWA_SEM		"${PROJECT_BINARY_DIR}/otawa_sem.h")
+set(OTAWA_SEM		"${PROJECT_BINARY_DIR}/sem.h")
 message(STATUS "GLISS_ATTR = ${GLISS_ATTR}")
 
 set(SOURCES
 	"${ARCH}.cpp"
 	"${OTAWA_KIND}"
-	"${OTAWA_TARGET}")
-#	"${OTAWA_USED_REGS}"
-#	"${OTAWA_SEM}"
+	"${OTAWA_TARGET}"
+	"${OTAWA_SEM}")
 #)
 
 # build of GLISS-derived sources
@@ -49,13 +47,8 @@ if(NOT MINGW_WIN)
 		DEPENDS ${TARGET_IRG}
 	)
 	add_custom_command(
-		OUTPUT ${OTAWA_USED_REGS} DEPENDS "used_regs.tpl" COMMAND ${GLISS_ATTR}
-		ARGS ${TARGET_IRG} -o ${OTAWA_USED_REGS} -a otawa_used_regs -f -t "used_regs.tpl" -d "tmp_var[0] = END_REG\\; return 0\\;" -e used_regs.nmp
-		DEPENDS ${TARGET_IRG}
-	)
-	add_custom_command(
 		OUTPUT ${OTAWA_SEM} DEPENDS "sem.tpl" "sem.nmp" COMMAND ${GLISS_ATTR}
-		ARGS ${TARGET_IRG} -o ${OTAWA_SEM} -a otawa_sem -p -t "sem.tpl" -d "';'" -e sem.nmp
+		ARGS ${TARGET_IRG} -o ${OTAWA_SEM} -p -a sem -t "sem.tpl" -d "\\;" -e sem.nmp
 		DEPENDS ${TARGET_IRG}
 	)
 endif()

@@ -20,6 +20,7 @@
  */
 
 #include <otawa/prog/Loader.h>
+#include <otawa/prog/sem.h>
 #include <otawa/hard.h>
 #include <gel/gel.h>
 #include <gel/gel_elf.h>
@@ -540,6 +541,114 @@ otawa::Inst *BranchInst::target() {
 otawa::Inst *Segment::decode(address_t address) {
 	return proc.decode(address);
 }
+
+
+/* semantics support */
+
+#define D(n)		regD[n]->platformNumber()
+#define A(n)		regA[n]->platformNumber()
+#define P(n)		A(n)
+#define _PSW		regPSW.platformNumber()
+#define FCX			regFCX.platformNumber()
+#define PC			regPC.platformNumber()
+#define A10			A(10)
+#define A11			A(11)
+#define A15			A(15)
+#define D15			D(15)
+
+#define T1			(-1)
+#define T2			(-2)
+#define T3			(-3)
+
+#	define IADDR		(inst->address().offset())
+
+#	define NE			sem::NE
+#	define EQ			sem::EQ
+#	define LT			sem::LT
+#	define LE			sem::LE
+#	define GE			sem::GE
+#	define GT			sem::GT
+#	define ULT			sem::ULT
+#	define UGE			sem::UGE
+
+#define SCRATCH(a)		block.add(sem::scratch(a))
+#	define SET(a, b)	block.add(sem::set(a, b))
+#	define SETI(a, b)	block.add(sem::seti(a, b))
+#	define ADD(a, b, c)	block.add(sem::add(a, b, c))
+#	define SUB(a, b, c)	block.add(sem::sub(a, b, c))
+#	define SHL(a, b, c)	block.add(sem::shl(a, b, c))
+#	define SHR(a, b, c)	block.add(sem::shr(a, b, c))
+#	define CMP(a, b, c)	block.add(sem::cmp(a, b, c))
+#	define IF(a, b, c)	block.add(sem::_if(a, b, c))
+#	define SCRATCH8(a)	SCRATCH(a); SCRATCH(a + 1)
+#	define BRANCH(a)	block.add(sem::branch(a))
+#	define CONT			block.add(sem::cont())
+#	define LOADW(d, a)	block.add(sem::load(d, a, 4))
+#	define LOADD(d, a)	block.add(sem::load(d, a, 8))
+#	define LOADSB(d, a)	block.add(sem::load(d, a, 1))
+#	define LOADUB(d, a)	block.add(sem::load(d, a, 1))
+#	define LOADSH(d, a)	block.add(sem::load(d, a, 2))
+#	define LOADUH(d, a)	block.add(sem::load(d, a, 2))
+#	define STOREW(d, a)	block.add(sem::store(d, a, 4))
+#	define STORED(d, a)	block.add(sem::store(d, a, 8))
+#	define STOREB(d, a)	block.add(sem::store(d, a, 1))
+#	define STOREH(d, a)	block.add(sem::store(d, a, 2))
+
+/*#	define E(n)			D(n)
+#	define S4(n)		(((int32_t)instr->instrinput[n].val.uint8 << 28) >> 28)
+#	define S6(n)		(((int8_t)instr->instrinput[n].val.uint8 << 2) >> 2)
+#	define S8(n)		(instr->instrinput[n].val.int8)
+#	define S9(n)		(((int32_t)instr->instrinput[n].val.uint16 << 23) >> 23)
+#	define S15(n)		(((int32_t)instr->instrinput[n].val.uint16 << 17) >> 17)
+#	define S16(n)		instr->instrinput[n].val.int16
+#	define U2(n)		instr->instrinput[n].val.uint8
+#	define U4(n)		instr->instrinput[n].val.uint8
+#	define U6(n)		instr->instrinput[n].val.uint8
+#	define U8(n)		instr->instrinput[n].val.uint8
+#	define U16(n)		instr->instrinput[n].val.uint16
+#	define SAVE_CONTEXT	\
+		SETI(T1, FCX); SETI(T2, 4); LOADW(T3, T1); \
+		STOREW(FCX, T1); ADD(T1, T1, T2); \
+		STOREW(PSW, T1); ADD(T1, T1, T2); \
+		STOREW(A(10), T1); ADD(T1, T1, T2); \
+		STOREW(A(11), T1); ADD(T1, T1, T2); \
+		STOREW(D(8), T1); ADD(T1, T1, T2); \
+		STOREW(D(9), T1); ADD(T1, T1, T2); \
+		STOREW(D(10), T1); ADD(T1, T1, T2); \
+		STOREW(D(11), T1); ADD(T1, T1, T2); \
+		STOREW(A(12), T1); ADD(T1, T1, T2); \
+		STOREW(A(13), T1); ADD(T1, T1, T2); \
+		STOREW(A(14), T1); ADD(T1, T1, T2); \
+		STOREW(A(15), T1); ADD(T1, T1, T2); \
+		STOREW(D(12), T1); ADD(T1, T1, T2); \
+		STOREW(D(13), T1); ADD(T1, T1, T2); \
+		STOREW(D(14), T1); ADD(T1, T1, T2); \
+		STOREW(D(15), T1); \
+		SETI(T1, 1 << 6); ADD(FCX, FCX, T1)
+#	define LOAD_CONTEXT	\
+		SETI(T1, FCX); SETI(T2, 4); \
+		LOADW(T3, T1); ADD(T1, T1, T2); \
+		LOADW(PSW, T1); ADD(T1, T1, T2); \
+		LOADW(A(10), T1); ADD(T1, T1, T2); \
+		LOADW(A(11), T1); ADD(T1, T1, T2); \
+		LOADW(D(8), T1); ADD(T1, T1, T2); \
+		LOADW(D(9), T1); ADD(T1, T1, T2); \
+		LOADW(D(10), T1); ADD(T1, T1, T2); \
+		LOADW(D(11), T1); ADD(T1, T1, T2); \
+		LOADW(A(12), T1); ADD(T1, T1, T2); \
+		LOADW(A(13), T1); ADD(T1, T1, T2); \
+		LOADW(A(14), T1); ADD(T1, T1, T2); \
+		LOADW(A(15), T1); ADD(T1, T1, T2); \
+		LOADW(D(12), T1); ADD(T1, T1, T2); \
+		LOADW(D(13), T1); ADD(T1, T1, T2); \
+		LOADW(D(14), T1); ADD(T1, T1, T2); \
+		LOADW(D(15), T1); \
+		STOREW(FCX, T1); SET(FCX, T3)
+#	define INT10(d, f4, f6)	SETI(d, (S4(f4) << 6) | U6(f6))
+#	define INT18(d, f0, f1, f2, f3)	SETI(d, (U4(f0) << 28) | (U4(f1) << 10) | (U4(f2) << 6) | U6(f3))
+#	define INT16(d, f0, f1, f2)		SETI(d, (S6(f0)<< 10) | (U4(f1) << 6) | U6(f2))
+*/
+#include "sem.h"
 
 
 /****** loader definition ******/

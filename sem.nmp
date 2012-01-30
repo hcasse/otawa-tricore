@@ -1,0 +1,129 @@
+
+canon int(32) "T1"
+canon int(32) "T2"
+canon int(32) "_PSW"
+
+macro D(i) 				= "D"(i)
+macro A(i) 				= "A"(i)
+macro _PSW				= "_PSW"
+macro T1				= "T1"
+macro T2				= "T2"
+macro ADD(p1, p2, p3)	= "ADD"(p1, p2, p3)
+macro SUB(p1, p2, p3)	= "SUB"(p1, p2, p3)
+macro SHL(p1, p2, p3)	= "SHL"(p1, p2, p3)
+macro SCRATCH(a)		= "SCRATCH"(a)
+macro SET(p1, p2)		= "SET"(p1, p2)
+macro SETI(p1, p2)		= "SETI"(p1, p2)
+
+// scratch d[c]
+extend abs_reg, absdif_const9, absdif_reg, addc_reg, addc_const9, addf,
+clz, cmpf, madd_, mulf, pack,
+and_eq_const, and_eq_reg, and_reg, and_const9,
+and_lt_u_reg, and_lt_u_const9, andn_reg, andn_const9,
+andt, and_nor_t,
+dextr_reg, dextr_pos,
+eq_a, eq_reg, eq_const9, eqanyb_reg, eqanyb_const, eqanyh_reg, eqanyh_const,
+extr_reg, extr_width, extr_pos, extr_u_reg, extr_u_width, extr_u_pos,
+ge_reg, ge_const9, gea, geu_reg, ge_u_const9,
+insert_reg, insert_width, insert_pos, insert_const4, insert_const4_width, insert_const4_pos, ins_t,
+ne_a, ne_reg, ne_const9, neza,
+or_eq_const, or_eq_reg, or_reg, or_const9, ort, or_lt_reg, or_lt_const9,
+or_lt_u_reg, or_lt_u_const9, or_ne_reg, or_ne_const9,
+nor_reg, nor_const, nort,
+sel_reg, sel_const9, seln_reg, seln_const9,
+sh_eq_const, sh_reg, sh_const9,
+xor_reg, xor_const9, xor_t,
+lt_reg, lt_const, ltu_reg, ltu_const,
+orn, minu_reg, max_reg, max_const, maxu_reg, maxu_const
+	sem = { SCRATCH(D(c.i)); }
+
+// scratch d[2c], d[2c + 1]
+extend madd_u_reg, unpack,
+imask_1, imask_2, imask_3, imask_4,
+dvadj
+	sem = { SCRATCH(D(c.i * 2)); SCRATCH(D(c.i * 2 + 1)); }
+
+// scratch PSW, d[2c], D[2c + 1]
+extend dvinit_bu, dvinit_, dvinit_b, dvinit_h, dvinit_hu, dvinit_u,
+dvstep_u, dvstep_,
+mul_e_reg, mul_e_const9, mulh_ll, mulh_lu, mulh_ul, mulh_uu, mul_u, mul_u_const9
+	sem = { SCRATCH(_PSW); SCRATCH(D(c.i * 2)); SCRATCH(D(c.i * 2 + 1)); }
+
+// scratch PSW
+extend cmpf
+	sem = { SCRATCH(_PSW); }
+
+// scratch PSW, d[c]
+extend adds_reg, adds_const9, addsh_s, addsh_u,
+cadd_reg, cadd_const9, caddn_const9, caddn_reg,
+mul_reg, muls_reg, mul_const9,
+sha_reg, sha_const9 ,
+csub, msub_reg, subb, subh, subc, subs, subu, subsh, subshu
+	sem = { SCRATCH(_PSW); SCRATCH(D(c.i)); }
+
+// ALU 32-bits
+extend add_reg
+	sem = { SCRATCH(_PSW); ADD(D(c.i), D(a.i), D(b.i)); }
+
+extend add_const9
+	sem = { SCRATCH(_PSW); SETI(T1, const.v); ADD(c.i, a.i, T1); }
+
+extend add_a_reg
+	sem = { ADD(D(c.i), D(a.i), D(b.i)); }
+
+extend addi
+	sem = { SCRATCH(_PSW); SETI(T1, const); ADD(D(c.i), D(a.i), T1); }
+
+extend addih
+	sem = { SCRATCH(_PSW); SETI(T1, const.v); SETI(T2, 16); SHL(T1, T1, T2); ADD(D(c.i), D(a.i), T1); }
+
+extend addih_a
+	otawa_sem = { SETI(T1, const.v); SETI(T2, 16); SHL(T1, T1, T2); ADD(A(0), T1, A(2)); }
+
+extend addsc_a
+	otawa_sem = { SETI(T1, 4); SHL(T2, A(a.i), T1); ADD(A(c.i), A(b.i), T2); }
+
+extend addsc_at
+	sem = { SCRATCH(A(c.i)); }
+
+extend addx_reg
+	sem = { SCRATCH(_PSW); ADD(D(c.i), D(a.i), D(b.i)); }
+
+extend addx_const9
+	sem = { SCRATCH(_PSW); SETI(T1, const.v); ADD(D(c.i), D(a.i), T1); }
+
+extend mov_reg
+	sem = { SET(D(c.i), D(b.i)); }
+
+extend mov_const16
+	sem = { SETI(D(c.i), const); }
+
+extend mov_a
+	sem = { SET(A(c.i), D(b.i)); }
+
+extend mov_aa
+	sem = { SET(A(c.i), A(b.i)); }
+
+extend mov_d
+	sem = { SET(D(c.i), A(b.i)); }
+
+extend mov_u
+	sem = { SETI(D(c.i), const); }
+
+extend movh_const16
+	sem = { SETI(T1, const); SETI(T2, 16); SHL(D(c.i), T1, T2); }
+
+extend movh_a
+	otawa_sem = { SETI(T1, const); SETI(T2, 16); SHL(A(c.i), T1, T2); }
+
+extend rsub
+	sem = { SCRATCH(_PSW); SETI(T1, const.v); SUB(D(c.i), T1, D(a.i)); }
+
+extend sub_reg
+	sem = { SCRATCH(_PSW); SUB(D(c.i), D(a.i), D(b.i)); }
+
+extend subx
+	sem = { SCRATCH(_PSW); SUB(D(c.i), D(a.i), D(b.i)); }
+
+extend sub_a
+	sem = { SUB(A(c.i), A(a.i), A(b.i)); }

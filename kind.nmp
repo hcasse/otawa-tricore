@@ -124,7 +124,10 @@ st_t
 extend st_d_bo10, st_d_post, swap_abs, swap_bo10
 	otawa_kind = IS_MEM | IS_STORE | IS_FLOAT
 
-extend tie, untie, yield
+extend tie, untie
+       otawa_kind = IS_SPECIAL
+
+extend  yield
 	otawa_kind = IS_CONTROL |  IS_TRAP
 
 extend disable, dsync, enable, isync

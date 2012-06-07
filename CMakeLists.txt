@@ -64,7 +64,7 @@ set_target_properties(${ARCH} PROPERTIES
 	LINK_FLAGS "${OTAWA_LDFLAGS}")
 set_property(TARGET ${ARCH} PROPERTY PREFIX "")
 set(SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}")
-target_link_libraries(${ARCH} "${TARGET_LIB}")
+target_link_libraries(${ARCH} "${TARGET_LIB}" gel)
 
 # installation
 set(INSTALL_PATH ${OTAWA_PREFIX}/lib/otawa/loader)

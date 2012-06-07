@@ -115,7 +115,7 @@ public:
 	virtual void dump(io::Output& out);
 	virtual kind_t kind() { return _kind; }
 	virtual address_t address() const { return _addr; }
-	virtual t::size size() const;
+	virtual t::uint32 size() const;
 	virtual Process &process() { return proc; }
 
 	virtual const elm::genstruct::Table<hard::Register *>& readRegs() {
@@ -499,7 +499,7 @@ private:
 
 /****** Instructions implementation ******/
 
-t::size Inst::size() const {
+t::uint32 Inst::size() const {
 	tricore_inst_t *inst = proc.decode_raw(_addr);
 	int res = tricore_get_inst_size(inst) / 8;
 	proc.free(inst);

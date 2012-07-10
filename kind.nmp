@@ -16,6 +16,7 @@ let IS_TRAP		= 0x00002000
 let IS_INTERN	= 0x00004000
 let IS_MULTI	= 0x00008000
 let IS_SPECIAL	= 0x00010000
+let IS_ATOMIC	= 0x00040000
 
 
 extend madd_, madd_u_reg, msub_const, msub_reg,
@@ -121,8 +122,11 @@ st_w_abs, st_w_bo10, st_w_bo16, st_w_circ, st_w_post, st_w_pre, st_w_rev,
 st_t
 	otawa_kind = IS_MEM | IS_STORE | IS_INT
 
-extend st_d_bo10, st_d_post, swap_abs, swap_bo10
+extend st_d_bo10, st_d_post
 	otawa_kind = IS_MEM | IS_STORE | IS_FLOAT
+
+extend swap_abs, swap_bo10
+	otawa_kind = IS_MEM | IS_STORE | IS_LOAD | IS_ATOMIC
 
 extend tie, untie
        otawa_kind = IS_SPECIAL

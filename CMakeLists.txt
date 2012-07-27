@@ -60,11 +60,10 @@ include_directories("${TARGET_INC}")
 message(STATUS "OTAWA_CXXFLAGS=${OTAWA_CXXFLAGS}")
 add_library(${ARCH} SHARED ${SOURCES})
 set_target_properties(${ARCH} PROPERTIES
-	COMPILE_FLAGS "${OTAWA_CXXFLAGS}"
-	LINK_FLAGS "${OTAWA_LDFLAGS}")
+	COMPILE_FLAGS "${OTAWA_CXXFLAGS}")
 set_property(TARGET ${ARCH} PROPERTY PREFIX "")
 set(SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}")
-target_link_libraries(${ARCH} "${TARGET_LIB}" gel)
+target_link_libraries(${ARCH} "${TARGET_LIB}" "${OTAWA_LDFLAGS}")
 
 # installation
 set(INSTALL_PATH ${OTAWA_PREFIX}/lib/otawa/loader)

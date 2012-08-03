@@ -2,7 +2,7 @@
  *	tricore -- OTAWA loader to support TriCore with GLISS2
  *
  *	This file is part of OTAWA
- *	Copyright (c) 2011, IRIT UPS.
+ *	Copyright (c) 2011-12, IRIT UPS.
  *
  *	OTAWA is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include <otawa/prog/Loader.h>
 #include <otawa/prog/sem.h>
 #include <otawa/hard.h>
+#include <otawa/loader/gliss.h>
 #include <gel/gel.h>
 #include <gel/gel_elf.h>
 #include <gel/debug_line.h>
@@ -186,7 +187,7 @@ private:
 
 /****** Process class ******/
 
-class Process: public otawa::Process {
+class Process: public otawa::Process, public gliss::Info {
 public:
 
 	Process(Manager *manager, hard::Platform *pf, const PropList& props = PropList::EMPTY)
@@ -234,6 +235,8 @@ public:
 		provide(CONTROL_DECODING_FEATURE);
 		provide(REGISTER_USAGE_FEATURE);
 		provide(MEMORY_ACCESSES);
+		provide(gliss::INFO_FEATURE);
+		gliss::INFO(this) = this;
 	}
 
 	virtual ~Process() {
@@ -242,6 +245,11 @@ public:
 		if(_file)
 			gel_close(_file);
 	}
+
+	// gliss::Info overload
+	virtual bool check(t::uint32 checksum) { return true; }
+	virtual void *decode(otawa::Inst *inst) { return decode_raw(inst->address()); }
+	virtual void free(void *desc) { release((tricore_inst_t *)desc); }
 
 	// Process overloads
 	virtual int instSize(void) const { return 0; }
@@ -309,6 +317,8 @@ public:
 		gel_enum_initpos(iter);
 		for(char *name = (char *)gel_enum_next(iter); name; name = (char *)gel_enum_next(iter)) {
 			ASSERT(name);
+			if(string(name).startsWith(".L"))
+				continue;
 			Address addr = Address::null;
 			Symbol::kind_t kind;
 			gel_sym_t *sym = gel_find_file_symbol(_file, name);
@@ -400,14 +410,14 @@ public:
 	inline int opcode(Inst *inst) const {
 		tricore_inst_t *i = decode_raw(inst->address());
 		int code = i->ident;
-		free(i);
+		release(i);
 		return code;
 	}
 
 	inline ::tricore_inst_t *decode_raw(Address addr) const
 		{ return tricore_decode(decoder(), ::tricore_address_t(addr.offset())); }
 
-	inline void free(tricore_inst_t *inst) const { tricore_free_inst(inst); }
+	inline void release(tricore_inst_t *inst) const { tricore_free_inst(inst); }
 	virtual gel_file_t *file(void) const { return _file; }
 	virtual tricore_memory_t *memory(void) const { return _memory; }
 	inline tricore_decoder_t *decoder() const { return _decoder; }
@@ -502,7 +512,7 @@ private:
 t::uint32 Inst::size() const {
 	tricore_inst_t *inst = proc.decode_raw(_addr);
 	int res = tricore_get_inst_size(inst) / 8;
-	proc.free(inst);
+	proc.release(inst);
 	return res;
 }
 
@@ -510,7 +520,7 @@ void Inst::dump(io::Output& out) {
 	char out_buffer[200];
 	tricore_inst_t *inst = proc.decode_raw(_addr);
 	tricore_disasm(out_buffer, inst);
-	proc.free(inst);
+	proc.release(inst);
 	out << out_buffer;
 }
 
@@ -522,7 +532,7 @@ void Inst::decodeRegs(void) {
 tricore_address_t BranchInst::decodeTargetAddress(void) {
 	tricore_inst_t *inst= proc.decode_raw(address());
 	tricore_address_t target_addr = tricore_target(inst);
-	proc.free(inst);
+	proc.release(inst);
 	return target_addr;
 }
 

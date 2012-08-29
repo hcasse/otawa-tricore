@@ -109,14 +109,14 @@ class Process;
 class Inst: public otawa::Inst {
 public:
 
-	inline Inst(Process& process, kind_t kind, Address addr)
-		: proc(process), _kind(kind), _addr(addr), isRegsDone(false) { }
+	inline Inst(Process& process, kind_t kind, Address addr, t::uint32 size)
+		: proc(process), _kind(kind), _addr(addr), isRegsDone(false), _size(size) { }
 
 	// Inst overload
 	virtual void dump(io::Output& out);
 	virtual kind_t kind() { return _kind; }
 	virtual address_t address() const { return _addr; }
-	virtual t::uint32 size() const;
+	virtual t::uint32 size() const { return _size; }
 	virtual Process &process() { return proc; }
 
 	virtual const elm::genstruct::Table<hard::Register *>& readRegs() {
@@ -145,6 +145,7 @@ private:
 	elm::genstruct::AllocatedTable<hard::Register *> out_regs;
 	tricore_address_t _addr;
 	bool isRegsDone;
+	t::uint32 _size;
 };
 
 
@@ -152,8 +153,8 @@ private:
 class BranchInst: public Inst {
 public:
 
-	inline BranchInst(Process& process, kind_t kind, Address addr)
-		: Inst(process, kind, addr), _target(0), isTargetDone(false)
+	inline BranchInst(Process& process, kind_t kind, Address addr, t::uint32 size)
+		: Inst(process, kind, addr, size), _target(0), isTargetDone(false)
 		{ }
 
 	virtual otawa::Inst *target();
@@ -398,10 +399,11 @@ public:
 		Inst::kind_t kind = 0;
 		otawa::Inst *result = 0;
 		kind = tricore_kind(inst);
+		t::uint32 size = tricore_get_inst_size(inst) / 8;
 		if(kind & Inst::IS_CONTROL)
-			result = new BranchInst(*this, kind, addr);
+			result = new BranchInst(*this, kind, addr, size);
 		else
-			result = new Inst(*this, kind, addr);
+			result = new Inst(*this, kind, addr, size);
 		free(inst);
 		return result;
 	}
@@ -508,13 +510,6 @@ private:
 
 
 /****** Instructions implementation ******/
-
-t::uint32 Inst::size() const {
-	tricore_inst_t *inst = proc.decode_raw(_addr);
-	int res = tricore_get_inst_size(inst) / 8;
-	proc.release(inst);
-	return res;
-}
 
 void Inst::dump(io::Output& out) {
 	char out_buffer[200];

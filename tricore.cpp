@@ -294,6 +294,7 @@ public:
 				gel_cursor_vaddr(cursor),
 				gel_cursor_addr(&cursor),
 				gel_cursor_avail(cursor));
+			cerr << "writing in memory at " << Address(gel_cursor_vaddr(cursor)) << ":" << io::hex(gel_cursor_avail(cursor)) << io::endl;
 		}
 
 		// cleanup image
@@ -396,14 +397,28 @@ public:
 
 	otawa::Inst *decode(Address addr) {
 		tricore_inst_t *inst = decode_raw(addr);
+
+		// compute the description of the instruction
 		Inst::kind_t kind = 0;
 		otawa::Inst *result = 0;
 		kind = tricore_kind(inst);
 		t::uint32 size = tricore_get_inst_size(inst) / 8;
+
+		// unknown instruction: 16-bits?
+		if(inst->ident == TRICORE_UNKNOWN) {
+			t::uint8 b;
+			get(Address(inst->addr), b);
+			if(!(b & 0x1))
+				size = 2;
+		}
+
+		// build the instruction
 		if(kind & Inst::IS_CONTROL)
 			result = new BranchInst(*this, kind, addr, size);
 		else
 			result = new Inst(*this, kind, addr, size);
+
+		// cleanup
 		free(inst);
 		return result;
 	}

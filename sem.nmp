@@ -22,7 +22,7 @@ and_eq_const, and_eq_reg, and_reg, and_const9,
 and_lt_u_reg, and_lt_u_const9, andn_reg, andn_const9,
 andt, and_nor_t,
 dextr_reg, dextr_pos,
-eq_a, eq_reg, eq_const9, eqanyb_reg, eqanyb_const, eqanyh_reg, eqanyh_const,
+eq_a, eq_reg, eq_const9, 		// eqanyb_reg, eqanyb_const, eqanyh_reg, eqanyh_const,
 extr_reg, extr_width, extr_pos, extr_u_reg, extr_u_width, extr_u_pos,
 ge_reg, ge_const9, gea, geu_reg, ge_u_const9,
 insert_reg, insert_width, insert_pos, insert_const4, insert_const4_width, insert_const4_pos, ins_t,
@@ -54,11 +54,11 @@ extend cmpf
 	sem = { SCRATCH(_PSW); }
 
 // scratch PSW, d[c]
-extend adds_reg, adds_const9, addsh_s, addsh_u,
+extend adds_reg, adds_const9, 		// addsh_s, addsh_u,
 cadd_reg, cadd_const9, caddn_const9, caddn_reg,
 mul_reg, muls_reg, mul_const9,
 sha_reg, sha_const9 ,
-csub, msub_reg, subb, subh, subc, subs, subu, subsh, subshu
+csub, msub_reg, subh, subc, subs, subu, subsh, subshu	// subb, 
 	sem = { SCRATCH(_PSW); SCRATCH(D(c.i)); }
 
 // ALU 32-bits

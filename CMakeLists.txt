@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_INSTALL_RPATH "\\$ORIGIN/../..")
+set(CMAKE_MACOSX_RPATH true)
 
 # configuration
 set(TARGET_PATH	"${CMAKE_SOURCE_DIR}/../tricore/" CACHE PATH "tricore GLISS2 directory")
@@ -10,9 +11,9 @@ find_program(OTAWA_CONFIG otawa-config DOC "OTAWA configuration file")
 if(NOT OTAWA_CONFIG)
 	message(FATAL_ERROR "FATAL: OTAWA not found but required !")
 endif()
-execute_process(COMMAND otawa-config --cflags OUTPUT_VARIABLE OTAWA_CXXFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-execute_process(COMMAND otawa-config --libs OUTPUT_VARIABLE OTAWA_LDFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-execute_process(COMMAND otawa-config --prefix OUTPUT_VARIABLE OTAWA_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND ${OTAWA_CONFIG} --cflags OUTPUT_VARIABLE OTAWA_CXXFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND ${OTAWA_CONFIG} --libs OUTPUT_VARIABLE OTAWA_LDFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND ${OTAWA_CONFIG} --prefix OUTPUT_VARIABLE OTAWA_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 # internals
 set(ARCH			"tricore")

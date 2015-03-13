@@ -294,7 +294,6 @@ public:
 				gel_cursor_vaddr(cursor),
 				gel_cursor_addr(&cursor),
 				gel_cursor_avail(cursor));
-			cerr << "writing in memory at " << Address(gel_cursor_vaddr(cursor)) << ":" << io::hex(gel_cursor_avail(cursor)) << io::endl;
 		}
 
 		// cleanup image
@@ -472,26 +471,26 @@ public:
 	}
 
 	virtual void get(Address at, signed char& val)
-		{ val = tricore_mem_read8(_memory, at.address()); }
+		{ val = tricore_mem_read8(_memory, at.offset()); }
 	virtual void get(Address at, unsigned char& val)
-		{ val = tricore_mem_read8(_memory, at.address()); }
+		{ val = tricore_mem_read8(_memory, at.offset()); }
 	virtual void get(Address at, signed short& val)
-		{ val = tricore_mem_read16(_memory, at.address()); }
+		{ val = tricore_mem_read16(_memory, at.offset()); }
 	virtual void get(Address at, unsigned short& val)
-		{ val = tricore_mem_read16(_memory, at.address()); }
+		{ val = tricore_mem_read16(_memory, at.offset()); }
 	virtual void get(Address at, signed long& val)
-		{ val = tricore_mem_read32(_memory, at.address()); }
+		{ val = tricore_mem_read32(_memory, at.offset()); }
 	virtual void get(Address at, unsigned long& val)
-		{ val = tricore_mem_read32(_memory, at.address()); }
+		{ val = tricore_mem_read32(_memory, at.offset()); }
 	virtual void get(Address at, signed long long& val)
-		{ val = tricore_mem_read64(_memory, at.address()); }
+		{ val = tricore_mem_read64(_memory, at.offset()); }
 	virtual void get(Address at, unsigned long long& val)
-		{ val = tricore_mem_read64(_memory, at.address()); }
+		{ val = tricore_mem_read64(_memory, at.offset()); }
 	virtual void get(Address at, Address& val)
-		{ val = tricore_mem_read32(_memory, at.address()); }
+		{ val = tricore_mem_read32(_memory, at.offset()); }
 	virtual void get(Address at, string& str) {
 		Address base = at;
-		while(!tricore_mem_read8(_memory, at.address()))
+		while(!tricore_mem_read8(_memory, at.offset()))
 			at = at + 1;
 		int len = at - base;
 		char buf[len];
@@ -499,7 +498,7 @@ public:
 		str = String(buf, len);
 	}
 	virtual void get(Address at, char *buf, int size)
-		{ tricore_mem_read(_memory, at.address(), buf, size); }
+		{ tricore_mem_read(_memory, at.offset(), buf, size); }
 
 private:
 	void setup_debug(void) {

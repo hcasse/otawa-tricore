@@ -19,8 +19,10 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <otawa/prog/File.h>
 #include <otawa/prog/Loader.h>
 #include <otawa/prog/sem.h>
+#include <otawa/prog/Segment.h>
 #include <otawa/hard.h>
 #include <otawa/loader/gliss.h>
 #include <gel/gel.h>
@@ -110,7 +112,7 @@ class Inst: public otawa::Inst {
 public:
 
 	inline Inst(Process& process, kind_t kind, Address addr, t::uint32 size)
-		: proc(process), _kind(kind), _addr(addr), isRegsDone(false), _size(size) { }
+		: proc(process), _kind(kind), _addr(addr.offset()), isRegsDone(false), _size(size) { }
 
 	// Inst overload
 	virtual void dump(io::Output& out);
@@ -672,15 +674,16 @@ otawa::Inst *Segment::decode(address_t address) {
 
 /****** loader definition ******/
 
-// alias table
-static string table[] = { "elf_44" };
-static elm::genstruct::Table<string> loader_aliases(table, 1);
 
 // loader definition
 class Loader: public otawa::Loader {
 public:
-	Loader(void): otawa::Loader("tricore", Version(2, 0, 0), OTAWA_LOADER_VERSION, loader_aliases) {
-	}
+	Loader(void): otawa::Loader(make("tricore", OTAWA_LOADER_VERSION)
+		.version("2.0.0")
+		.description("loader for TriCore architecture")
+		.license(Manager::copyright)
+		.alias("elf_44")) { }
+
 
 	virtual otawa::Process *load(Manager *man, CString path, const PropList& props) {
 		otawa::Process *proc = create(man, props);

@@ -1,0 +1,13 @@
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+
+*.so
+
+kind.h
+sem.h
+target.h
+
+confidential.nmp

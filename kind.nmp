@@ -1,3 +1,7 @@
+/////////////////////////////////
+//// Otawa_kind for TRICORE 1.6P
+/////////////////////////////////
+
 let NO_KIND		= 0x00000000
 let IS_COND		= 0x00000001
 let IS_CONTROL	= 0x00000002
@@ -17,157 +21,294 @@ let IS_INTERN	= 0x00004000
 let IS_MULTI	= 0x00008000
 let IS_SPECIAL	= 0x00010000
 let IS_ATOMIC	= 0x00040000
-let IS_LP		= 0x80000000	// move to loop pipeline
+let IS_LP		= 0x80000000	// move to loop pipeline (only TC 1.6P)
 let IS_LS		= 0x40000000	// move to load/store pipeline
 let IS_FP		= 0x20000000	// move to FPU pipeline
 								// other instructions move to the integer pipeline
 
 
-extend madd_, madd_u_reg, msub_const, msub_reg,
-mul_const9,  mul_reg, mul16, muls_const9, muls_reg
-	otawa_kind = IS_INT | IS_MUL
-
-extend abs_reg, absdif_const9, absdif_reg,
-add_const9, add_reg,
-add16_1, add16_2, add16_3, add16_4, add16_5, add16_6,
-addc_const9, addc_reg, addi, addih,
-adds_const9, adds_reg, addsca, addx_const9, addx_reg,	// addsh_s, addsh_u, 
-and_const9, and_eq_const, and_eq_reg, and_lt_u_const9, and_lt_u_reg, and_nor_t, and_reg,
-and16_1, and16_2, 
-andn_const9, andn_reg, andt,
-cadd_const9, cadd_reg, cadd16, cadd16_n, caddn_const9, caddn_reg,
-clz,
-cmov16_const, cmov16_reg,
-csub,
-dextr_pos, dextr_reg,
-eq_const9, eq_reg, eq16_1, eq16_2,
-// eqanyb_const, eqanyb_reg, eqanyh_const, eqanyh_reg,
-extr_pos, extr_reg, extr_u_pos, extr_u_reg, extr_u_width, extr_width,
-ge_const9, ge_reg, ge_u_const9, geu_reg,
-ins_t,
-insert_const4, insert_const4_pos, insert_const4_width, insert_pos, insert_reg, insert_width,
-lt_const, lt_reg, lt16_const, lt16_reg, ltu_const, ltu_reg,
-max_const, max_reg, maxu_const, maxu_reg, minu_reg,
-mov_const16, mov_reg,  mov_u,
-mov_16_1, mov_16_2, mov_16_3, mov_a_16_4, mov_a_16_5,
-movh_const16,
-ne_const9, ne_reg,
-nor_const, nor_reg, nort, not16,
-or_16_1, or_16_2, 
-or_const9, or_eq_const, or_eq_reg, or_lt_const9, or_lt_reg, or_lt_u_const9, or_lt_u_reg,
-or_ne_const9, or_ne_reg, or_reg, orn, ort,
-rsub, rsub_16,
-sel_const9, sel_reg, seln_const9, seln_reg,
-sh_16, sh_eq_const, sh_const9, sh_reg, sha_16, sha_const9, sha_reg,
-sub_16_1, sub_16_2, sub_16_3, 
-sub_reg, subc, subh, subs, subs16, subsh, subshu, subu, subx,	// subb, 
-xor16, xor_const9, xor_reg, xor_t
+//abs
+extend absdifs_h, absdif_b, absdif_h, absdifs_reg, absdifs_const9, absdif_reg, absdif_const9, abs_reg, abs_h, abs_b, abss, abss_h
 	otawa_kind = IS_INT | IS_ALU
 
-extend
-	add_a_16_const, add_a_16_reg, add_a_reg,
-	addih_a,
-	addsc_a, addsc_at,
-	eq_a,
-	gea,
-	lea_10, lea_16, lea_18,
-	mfcr,
-	mov_a, mov_aa, mov_aa_16,
-	mov_d, mov_d_16,
-	movh_a,  
-	mtcr,
-	ne_a, neza,
-	sub_a, sub_a_16
-		otawa_kind = IS_INT | IS_ALU | IS_LS
+//add
+extend add_h, add_b, adds_u_reg, adds_u_const, add_reg, add_const9, add16_1, add16_2, add16_3, add16_4, add16_5, add16_6 , addc_reg, addc_const9, addi, addih , adds_reg, adds_const9, adds16, addsh_s, addsh_u, addx_reg, addx_const9
+	otawa_kind = IS_INT | IS_ALU
 
-extend addf, cmpf,
-dvadj, dvinit_, dvinit_b, dvinit_bu, dvinit_h, dvinit_hu, dvinit_u, dvstep_, dvstep_u,
-imask_1, imask_2, imask_3, imask_4, pack, unpack
-	otawa_kind = IS_ALU | IS_FLOAT
+//add address
+extend add_a_reg, add_a_16_const, add_a_16_reg , addih_a , sub_a_16 , sub_a
+	otawa_kind = IS_ALU | IS_LS
 
-extend mul_e_const9, mul_e_reg, mul_u, mul_u_const9, mulf, mulh_ll, mulh_lu, mulh_ul, mulh_uu
-	otawa_kind = IS_MUL | IS_FLOAT
+//addsc
+extend addsc_a, addsc_at, addsca
+	otawa_kind = IS_LS | IS_ALU | IS_SHIFT
 
-extend jl
-	otawa_kind = IS_CONTROL | IS_CALL | IS_LS
-
-extend call, call16, calla, calli
-	otawa_kind = IS_CONTROL | IS_CALL | IS_LS
-
-extend j, j16, ja, ji, ji_16
-	otawa_kind = IS_CONTROL | IS_LS
-
-extend
-	jeq16_1, jeq16_2, jeq_const4, jeq_reg,
-	jge_const4, jge_reg, jge_u, jge_u_const4, jgez, jgtz,
-	jlez, jlt_const4, jlt_reg, jlt_u, jlt_u_const4, jltz,
-	jne16_const, jne16_reg, jne_const4, jne_reg,
-	jned_const4, jned_reg,
-	jnei_const4, jnei_reg,
-	jnz_16_1, jnz_16_2, jnz_t, jnz_t_16,
-	jz_a_16, jz_disp4_16, jz_disp8_16, jz_t_16, jz_t
-		otawa_kind = IS_CONTROL | IS_COND
-
-extend loop, loop_16
-	otawa_kind = IS_CONTROL | IS_COND | IS_LP
-
-extend jeq_a, jne_a, jnz_a, jnz_a_16, jz_a
-	otawa_kind = IS_CONTROL | IS_COND | IS_LS
-
-extend ret, ret_16
-	otawa_kind = IS_CONTROL | IS_RETURN | IS_LS
-
-extend 
-	ld_a_16_1, ld_a_16_2, ld_a_16_3,
-	ld_a_16_4, ld_a_16_5, ld_a_2,
-	ld_a_abs, ld_a_bo10, ld_a_bo16,
-	ld_b_abs, ld_b_bo10, ld_b_post, ld_b_pre,
-	ld_bu_16_1, ld_bu_16_2, ld_bu_16_3, ld_bu_16_4, ld_bu_abs, ld_bu_bo10,
-	ld_h_16_1, ld_h_16_2, ld_h_16_3, ld_h_16_4,
-	ld_h_abs, ld_h_bo10, ld_h_circ, ld_h_post, ld_h_pre, ld_h_rev,
-	ld_hu_abs, ld_hu_base,
-	ld_w_16_1, ld_w_16_2, ld_w_16_3, ld_w_16_4, ld_w_16_5, ld_w_abs, ld_w_bo10, ld_w_bo16, ld_w_post, ld_w_pre,
-	ld_q_pre
-		otawa_kind = IS_MEM | IS_LOAD | IS_INT | IS_LS
-
-extend ld_d_abs, ld_d_bo10, ld_d_post, ld_d_pre
-	otawa_kind = IS_MEM | IS_LOAD | IS_FLOAT
-
-extend svlcx
-	otawa_kind = IS_MEM | IS_LOAD | IS_INT | IS_MULTI
-
-extend ldmst_abs, ldmst_bo10, ldmst_post, ldmst_pre
-	otawa_kind = IS_MEM | IS_LOAD | IS_STORE | IS_INT | IS_LS
+//and
+extend and_reg, and_const9, and16_1, and16_2, and_and_t, and_andn_t, and_or_t, and_nor_t, and_eq_const, and_eq_reg, and_ge_reg, and_ge_const, and_geu_reg, and_geu_const, and_lt_u_reg, and_lt_u_const9, and_lt_const, and_lt_reg, and_ne_reg, and_ne_const, andt, andn_reg, andn_const9, andn_t
+	otawa_kind = IS_INT | IS_ALU
 	
-extend
-	st_a_16_1, st_a_16_2, st_a_16_3, st_a_16_4, st_a_16_5, 
-	st_a_abs, st_a_bo10, st_a_circ, st_a_post, st_a_pre, st_a_rev,
-	st_b_16_1, st_b_16_2, st_b_16_3, st_b_16_4, 
-	st_b_abs, st_b_bo10, st_b_post, st_b_pre,
-	st_h_16_1, st_h_16_2, st_h_16_3, st_h_16_4,
-	st_h_abs, st_h_bo10, st_h_post, st_h_pre,
-	st_w_16_1, st_w_16_2, st_w_16_3, st_w_16_4, st_w_16_5,
-	st_w_abs, st_w_bo10, st_w_bo16, st_w_circ, st_w_post, st_w_pre, st_w_rev,
-	st_t
-		otawa_kind = IS_MEM | IS_STORE | IS_INT | IS_LS
-
-extend st_d_bo10, st_d_post
-	otawa_kind = IS_MEM | IS_STORE | IS_FLOAT
-
-extend swap_abs, swap_bo10
-	otawa_kind = IS_MEM | IS_STORE | IS_LOAD | IS_ATOMIC | IS_LS
-
-extend tie, untie
-       otawa_kind = IS_SPECIAL
-
-extend  yield
-	otawa_kind = IS_CONTROL |  IS_TRAP
-
-extend disable, dsync, enable, isync
+//bisr
+extend bisr, bisr16
 	otawa_kind = IS_SPECIAL | IS_LS
-
+	
+//bmerge
+extend bmerge, bsplit
+	otawa_kind = IS_INT
+	
+//cache
+extend cachea_i_bo , cachea_i_rev , cachea_i_circ , cachea_i_post, cachea_i_pre,
+				cachea_w_bo, cachea_w_rev , cachea_w_circ , cachea_w_post , cachea_w_pre,
+				cachea_wi_bo , cachea_wi_rev , cachea_wi_circ , cachea_wi_post, cachea_wi_pre,
+				cachei_w_bo , cachei_w_post , cachei_w_pre,
+				cachei_i_bo , cachei_i_post , cachei_i_pre,
+				cachei_wi_bo , cachei_wi_post , cachei_wi_pre
+	otawa_kind = IS_MEM | IS_LS | IS_INTERN
+	
+//cadd csub
+extend cadd_reg, cadd_const9, cadd16, cadd16_n, caddn_const9, caddn_reg, csub, csubn
+	otawa_kind = IS_INT | IS_ALU | IS_COND
+	
+//call
+extend call, call16, calla, calli 
+	otawa_kind = IS_CALL | IS_CONTROL | IS_MULTI | IS_LS | IS_LOAD | IS_STORE | IS_TRAP 
+	
+//ret
+extend ret , ret_16
+	otawa_kind = IS_RETURN | IS_CONTROL | IS_MULTI | IS_LS | IS_LOAD | IS_STORE | IS_TRAP 
+	
+//clo clz cls
+extend clo, clo_h, clz, clz_h, cls, cls_h
+	otawa_kind = IS_INT | IS_ALU
+	
+//cmov
+extend cmov16_reg, cmov16_const, cmovn16_const, cmovn16_reg
+	otawa_kind = IS_INT | IS_COND 
+	
+//debug
 extend debug, debug16
-	otawa_kind = IS_CONTROL | IS_TRAP | IS_LS
+	otawa_kind = IS_SPECIAL | IS_LS
+	
+//dextr
+extend dextr_reg , dextr_pos , extr_pos , extr_u_reg , extr_u_width , extr_u_pos , extr_reg , extr_width
+	otawa_kind = IS_INT | IS_SHIFT
+	
+//disable enable
+extend enable , disable , disable2
+	otawa_kind = IS_INTERN | IS_SPECIAL | IS_LS
+	
+//sync
+extend dsync , isync
+	otawa_kind = IS_MEM | IS_INTERN | IS_LS
+	
+//div
+extend dvadj , divs , divu , dvstep_ , dvstep_u
+	otawa_kind = IS_INT | IS_DIV
+	
+//div init
+extend dvinit_ , dvinit_bu , dvinit_b , dvinit_h , dvinit_hu , dvinit_u
+	otawa_kind = IS_INT | IS_ALU
+	
+//eq-ge-lt-ne 
+extend eq_reg , eq_const9 , eq16_1 , eq16_2 , eq_b , eq_h , eq_w , eqanyb_reg , eqanyb_const , eqanyh_reg , eqanyh_const , ge_reg , ge_const9 , ge_u_const9 , geu_reg , lt_reg , lt_const , lt16_reg , lt16_const , ltu_reg , ltu_const , lt_b , lt_bu , lt_h , lt_hu , lt_w , lt_wu , ne_reg , ne_const9 , neza , ne_a
+	otawa_kind = IS_INT | IS_ALU
+	
+//eq address 
+extend eq_a , eqz_a , gea , lt_a
+	otawa_kind = IS_INT | IS_ALU | IS_LS
+	
+//fcall
+extend fcall , fcalla , fcalli	
+	otawa_kind = IS_CALL | IS_LS | IS_MEM | IS_STORE | IS_CONTROL
 
+//fret
+extend fret , fret16
+	otawa_kind = IS_LS | IS_RETURN | IS_MEM | IS_LOAD | IS_CONTROL
+	
+//imask
+extend imask_1 , imask_2 , imask_3 , imask_4
+	otawa_kind = IS_INT | IS_ALU | IS_SHIFT
+	
+//inst
+extend ins_t , insn_t 
+	otawa_kind = IS_INT | IS_ALU 
+	
+//insert
+extend insert_reg , insert_width , insert_pos , insert_const4 , insert_const4_width , insert_const4_pos
+	otawa_kind = IS_INT | IS_ALU | IS_SHIFT
+	
+//ixmax ixmin
+extend ixmax , ixmax_u , ixmin , ixmin_u
+	otawa_kind = IS_INT | IS_ALU
+	
+//jump
+extend j , j16 , ja , ji_16 , ji , jl , jla, jli 
+	otawa_kind = IS_CONTROL
+	
+//loop
+extend loop , loopu , loop_16 , jned_reg , jned_const4 , jnei_reg , jnei_const4
+	otawa_kind = IS_LP | IS_CONTROL | IS_COND
+	
+//jump cond
+extend jeq_reg_const , jeq_reg_reg , jeq16_const_1 , jeq16_const_2 , jeq16_reg_1 , jeq16_reg_2 , jeq_a , jge_reg , jge_const4 , jge_u , jge_u_const4 , jgez , jgtz , jlez , jlt_reg ,  jlt_const4 , jlt_u , jlt_u_const4 , jltz , jne_reg , jne_const4 , jne_a , jne16_reg_1 , jne16_const_1 , jne16_reg_2 , jne16_const_2 , jnz_16_1 , jnz_16_2 , jnz_a_16 , jnz_t_16 , jnz_a , jnz_t , jz_t_16 , jz_disp4_16 , jz_disp8_16 , jz_a_16 , jz_a , jz_t
+	otawa_kind = IS_CONTROL | IS_COND
+	
+//load
+extend ld_a_abs , ld_a_bo16 , ld_a_pre , ld_a_bo10 , ld_a_post , ld_a_circ , ld_a_rev , ld_a_16_1 , ld_a_16_2 , ld_a_16_3 , ld_a_16_4 , ld_a_16_5 , ld_b_bo10 , ld_b_post , ld_b_pre , ld_b_abs , ld_b_bo16 , ld_b_rev , ld_b_circ , ld_bu_abs , ld_bu_bo10 , ld_bu_bo16 , ld_bu_pre , ld_bu_post , ld_bu_circ , ld_bu_rev , ld_bu_16_1 , ld_bu_16_2 , ld_bu_16_3 , ld_bu_16_4 , ld_d_bo10 , ld_d_post , ld_d_abs , ld_d_pre , ld_d_rev , ld_d_circ , ld_da_bo10 , ld_da_post , ld_da_abs , ld_da_pre , ld_da_rev , ld_da_circ , ld_h_abs , ld_h_bo10 , ld_h_rev , ld_h_circ , ld_h_post , ld_h_pre , ld_h_bo16 , ld_h_16_1 , ld_h_16_2 , ld_h_16_3 , ld_h_16_4 , ld_hu_abs , ld_hu_bo10 , ld_hu_rev , ld_hu_circ , ld_hu_post , ld_hu_pre , ld_hu_bo16 , ld_q_abs , ld_q_bo10 , ld_q_rev , ld_q_circ , ld_q_post , ld_q_pre , ld_w_abs , ld_w_bo10 , ld_w_post , ld_w_pre , ld_w_bo16 , ld_w_rev , ld_w_circ , ld_w_16_1 , ld_w_16_2 , ld_w_16_3 , ld_w_16_4 , ld_w_16_5
+	otawa_kind = IS_LS | IS_MEM | IS_LOAD 
+	
+//lea
+extend lea_18 , lea_10 , lea_16
+	otawa_kind = IS_LS
+	
+//load context
+extend ldlcx_abs , ldlcx_ind , lducx_abs , lducx_ind
+	otawa_kind = IS_MEM | IS_LS | IS_LOAD | IS_MULTI
+	
+//ldmst
+extend ldmst_abs , ldmst_bo10 , ldmst_post , ldmst_pre , ldmst_br , ldmst_circ
+	otawa_kind = IS_MEM | IS_LS | IS_LOAD | IS_STORE | IS_ATOMIC 
+	
+//madd-msub
+extend msubu_reg , msubu_const , msubsu_reg , msubsu_const , msubsu64_reg , msubsu64_const , madd32_reg , madd32_const , madd64_reg , madd64_const , madds32_reg , madds32_const , madds64_reg , madds64_const , maddh_1 , maddh_2 , maddh_3 , maddh_4 , maddsh_1 , maddsh_2 , maddsh_3 , maddsh_4 , maddq_1 , maddq_2 , maddq_3 , maddq_4 , maddq_5 , maddq_6 , maddq_7 , maddq_8 , maddq_9 , maddq_10 , maddsq_1 , maddsq_2 , maddsq_3 , maddsq_4 , maddsq_5 , maddsq_6 , maddsq_7 , maddsq_8 , maddsq_9 , maddsq_10 , madd_u_reg , madd_u_const , maddsu32_reg , maddsu32_const , maddsu64_reg , maddsu64_const , msub_reg , msub_const , msub_reg64 , msub_const64 , msubs_reg , msubs_const , msubs_reg64 , msubs_const64 
+	otawa_kind = IS_INT | IS_ALU | IS_MUL 
+	
+//madd-msub Q format
+extend maddm_h_ll , maddm_h_lu , maddm_h_ul , maddm_h_uu , maddms_h_ll , maddms_h_uu , maddms_h_ul , maddms_h_lu , maddrq_1 , maddrq_2 , maddrsq_1 , maddrsq_2 , maddrh_1 , maddrh_2 , maddrh_3 , maddrh_4 , maddrh_5 , maddrsh_1 , maddrsh_2 , maddrsh_3 , maddrsh_4 , maddrsh_5 , maddsuh_1 , maddsuh_2 , maddsuh_3 , maddsuh_4 , maddsush_1 , maddsush_2 , maddsush_3 , maddsush_4 , maddsumh_1 , maddsumh_2 , maddsumh_3 , maddsumh_4 , maddsumsh_1 , maddsumsh_2 , maddsumsh_3 , maddsumsh_4 , maddsurh_1 , maddsurh_2 , maddsurh_3 , maddsurh_4 , maddsursh_1 , maddsursh_2 , maddsursh_3 , maddsursh_4 , msubh_1 , msubh_2 , msubh_3 , msubh_4 , msubsh_1 , msubsh_2 , msubsh_3 , msubsh_4 , msubq_1 , msubq_2 , msubq_3 , msubq_4 , msubq_5 , msubq_6 , msubq_7 , msubq_8 , msubq_9 , msubq_10 , msubsq_1 , msubsq_2 , msubsq_3 , msubsq_4 , msubsq_5 , msubsq_6 , msubsq_7 , msubsq_8 , msubsq_9 , msubsq_10 , msubadh_1 , msubadh_2 , msubadh_3 , msubadh_4 , msubadsh_1 , msubadsh_2 , msubadsh_3 , msubadsh_4 , msubadmh_1 , msubadmh_2 , msubadmh_3 , msubadmh_4 , msubadmsh_1 , msubadmsh_2 , msubadmsh_3 , msubadmsh_4 , msubadrh_1 , msubadrh_2 , msubadrh_3 ,msubadrh_4 , msubadrsh_1 , msubadrsh_2 , msubadrsh_3 , msubadrsh_4 , msubmh_1 , msubmh_2 , msubmh_3 , msubmh_4 , msubmsh_1 , msubmsh_2 , msubmsh_3 , msubmsh_4 , msubrh_1 , msubrh_2 , msubrh_3 , msubrh_4 , msubrsh_1 , msubrsh_2 , msubrsh_3 , msubrsh_4 , msubrh_5 , msubrsh_5 , msubrq_1 , msubrq_2 , msubrsq_1 , msubrsq_2
+	otawa_kind = IS_INT | IS_ALU | IS_MUL | IS_SHIFT
+	
+//max-min
+extend max_reg , max_const , maxu_reg , maxu_const , max_b , max_bu , max_h , max_hu , min_u_reg , min_u_const , min_reg , min_const , min_bu , min_b , min_h , min_hu
+	otawa_kind = IS_INT | IS_ALU 
+	
+//mfcr
+extend mfcr , mtcr
+	otawa_kind  = IS_SPECIAL | IS_LS
+	
+//mov
+extend mov_reg , mov_const32 , mov_const64 , mov_reg64 , mov_rr64 , mov_16_1 , mov_16_2 , mov_16_3 , mov_16_4 , mov_d_16 , mov_d , mov_u , movh_const16
+	otawa_kind = IS_INT
+	
+//mov address
+extend mov_a_16_4 , mov_a_16_5 , mov_a , mov_aa , mov_aa_16 , movh_a
+	otawa_kind = IS_LS	
+
+//mul
+extend mul16 , mul_reg , mul_e_reg , mul_const9 , mul_e_const9 , muls_reg , muls_const9 , mul_u , mul_u_const9 , muls_u_reg , muls_u_const
+	otawa_kind = IS_INT | IS_MUL
+	
+//mul Q format
+extend mulh_ll , mulh_lu , mulh_ul , mulh_uu , mul_q1 , mul_q2 , mul_q3 , mul_q4 , mul_q5 , mul_q6 , mul_q7 , mul_q8 , mulmh_1 , mulmh_2 , mulmh_3 , mulmh_4 , mulrh_1 , mulrh_2 , mulrh_3 , mulrh_4 , mulrq_1 , mulrq_2
+	otawa_kind = IS_INT | IS_MUL | IS_SHIFT
+	
+//nand
+extend nand_reg , nand_const , nand_t
+	otawa_kind = IS_INT | IS_ALU
+	
+//nop
+extend nop32 , nop_16
+	otawa_kind = IS_LS
+	
+//nor
+extend nor_reg , nor_const , nort
+	otawa_kind = IS_INT | IS_ALU
+	
+//not
+extend not16
+	otawa_kind = IS_INT | IS_ALU
+	
+//or
+extend or_16_1 , or_16_2 , or_reg , or_const9 , or_and_t , or_andn_t , or_nor_t , or_or_t , or_eq_const , or_eq_reg , or_ge_reg , or_ge_const , or_ge_u_reg , or_ge_u_const , or_lt_reg , or_lt_const9 , or_lt_u_reg , or_lt_u_const9 , or_ne_reg , or_ne_const9 , ort , orn_const , orn_reg , orn_t
+	otawa_kind = IS_INT | IS_ALU
+	
+//pack unpack parity
+extend pack , unpack , parity
+	otawa_kind = IS_INT | IS_ALU
+	
+//restore
+extend restore
+	otawa_kind = IS_SPECIAL | IS_LS
+	
+//rfe
+extend rfe , rfe16
+	otawa_kind = IS_TRAP | IS_MEM | IS_LS | IS_MULTI | IS_LOAD | IS_STORE | IS_CONTROL | IS_RETURN
+	
+//rfm
+extend rfm
+	otawa_kind = IS_TRAP | IS_MEM | IS_LS | IS_LOAD
+	
+//restore-save context
+extend rslcx , svlcx
+	otawa_kind = IS_MEM | IS_LS | IS_LOAD | IS_MULTI | IS_STORE | IS_TRAP
+	
+//rstv
+extend rstv
+	otawa_kind = IS_INTERN | IS_LS
+	
+//rsub
+extend rsub_16 , r_sub , rsubs , rsubs_u
+	otawa_kind = IS_INT | IS_ALU
+	
+//sat
+extend sat_b , sat_bu , sat_h , sat_hu , sat16_b , sat16_bu , sat16_h , sat16_hu
+	otawa_kind = IS_INT | IS_ALU
+	
+//sel
+extend sel_reg , sel_const9 , seln_reg , seln_const9
+	otawa_kind = IS_INT | IS_ALU
+	
+//shift
+extend sh_reg , sh_const9 , sh_16 , sh_ge_reg , sh_ge_const , sh_ge_u_reg , sh_ge_u_const , sh_eq_const , sh_eq_reg , sh_lt_reg , sh_lt_const , sh_lt_u_reg , sh_lt_u_const , sh_ne_reg , sh_ne_const , sh_h_reg , sh_h_const , sh_and_t , sh_andn_t , sh_nand_t , sh_nor_t , sh_or_t , sh_orn_t , sh_xnor_t , sh_xor_t
+	otawa_kind = IS_INT | IS_SHIFT | IS_ALU
+	
+//sha
+extend sha_16 , sha_reg , sha_const9 , sha_h_reg , sha_h_const , shas_reg , shas_const
+	otawa_kind = IS_INT | IS_SHIFT | IS_ALU
+	
+//store
+extend st_a_abs , st_a_bo10 , st_a_rev , st_a_circ , st_a_post , st_a_pre , st_a_bol , st_a_16_1 , st_a_16_2 , st_a_16_3 , st_a_16_4 , st_a_16_5 , st_b_16_1 , st_b_16_2 , st_b_16_3 , st_b_16_4 , st_b_abs , st_b_bo10 , st_b_post , st_b_pre , st_b_bo16 , st_b_rev , st_b_circ , st_d_bo10 , st_d_abs , st_d_pre , st_d_post , st_d_rev , st_d_circ , st_da_bo10 , st_da_abs , st_da_pre , st_da_post , st_da_rev , st_da_circ , st_h_abs , st_h_bo10 , st_h_post , st_h_pre , st_h_bo16 , st_h_rev , st_h_circ , st_h_16_1 , st_h_16_2 , st_h_16_3 , st_h_16_4 , st_q_abs , st_q_bo10 , st_q_rev , st_q_circ , st_q_post , st_q_pre , st_w_abs , st_w_bo10 , st_w_rev , st_w_post , st_w_pre , st_w_circ , st_w_bo16 , st_w_16_1 , st_w_16_2 , st_w_16_3 , st_w_16_4 , st_w_16_5
+	otawa_kind = IS_LS | IS_MEM | IS_STORE 
+	
+//st.t
+extend st_t
+	otawa_kind = IS_LS | IS_MEM | IS_STORE | IS_SHIFT | IS_ATOMIC
+	
+//store context
+extend stlcx_abs , stlcx_ind , stucx_abs , stucx_ind
+	otawa_kind = IS_MEM | IS_LS | IS_STORE | IS_MULTI
+	
+//sub
+extend sub_reg , sub_16_1 , sub_16_2 , sub_16_3 , subb , subh , subc , subs , subs_u , subs16 , subsh , subshu , subx
+	otawa_kind = IS_INT | IS_ALU
+	
+//swap.w
+extend swap_abs , swap_bo10 , swap_br , swap_ca , swap_post , swap_pre 
+	otawa_kind = IS_MEM | IS_LS | IS_STORE | IS_MULTI | IS_LOAD | IS_ATOMIC
+	
+//syscall
 extend syscall
-	otawa_kind = IS_CONTROL | IS_TRAP | IS_LS
+	otawa_kind = IS_INTERN | IS_TRAP | IS_SPECIAL | IS_LS
+	
+//trapv trapsv
+extend trapsv , trapv
+	otawa_kind = IS_TRAP | IS_LS
+	
+//xnor-xor
+extend xnor_reg , xnor_const , xnor_t , xor_reg , xor_const9 , xor_t , xor16 , xor_eq_const , xor_eq_reg , xor_ge_reg , xor_ge_const , xor_geu_reg , xor_geu_const , xor_lt_reg , xor_lt_const , xor_ltu_reg , xor_ltu_const , xor_ne_const , xor_ne_reg
+	otawa_kind = IS_INT | IS_ALU
+
+//fp operations
+extend addf , cmpf , ftoi , ftoiz , ftoq31 , ftoq31z , ftou , ftouz , itof , q31tof , qseedf , subf , utof
+	otawa_kind = IS_FLOAT | IS_FP
+	
+//mulf
+extend mulf , maddf , msubf
+	otawa_kind = IS_FLOAT | IS_FP | IS_MUL
+	
+//divf
+extend divf
+	otawa_kind = IS_FLOAT | IS_FP | IS_DIV
+	
+//update flags
+extend updfl
+	otawa_kind = IS_FLOAT | IS_FP | IS_INTERN
+	

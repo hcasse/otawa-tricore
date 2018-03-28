@@ -21,6 +21,7 @@
 
 #include <otawa/prog/Loader.h>
 #include <otawa/prog/sem.h>
+#include <otawa/program.h>
 #include <otawa/hard.h>
 #include <otawa/loader/gliss.h>
 #include <gel/gel.h>
@@ -110,7 +111,7 @@ class Inst: public otawa::Inst {
 public:
 
 	inline Inst(Process& process, kind_t kind, Address addr, t::uint32 size)
-		: proc(process), _kind(kind), _addr(addr), isRegsDone(false), _size(size) { }
+		: proc(process), _kind(kind), _addr(addr.offset()), isRegsDone(false), _size(size) { }
 
 	// Inst overload
 	virtual void dump(io::Output& out);
@@ -294,6 +295,7 @@ public:
 				gel_cursor_vaddr(cursor),
 				gel_cursor_addr(&cursor),
 				gel_cursor_avail(cursor));
+			//cerr << "writing in memory at " << Address(gel_cursor_vaddr(cursor)) << ":" << io::hex(gel_cursor_avail(cursor)) << io::endl;
 		}
 
 		// cleanup image
@@ -578,54 +580,68 @@ otawa::Inst *Segment::decode(address_t address) {
 #define T1			(-1)
 #define T2			(-2)
 #define T3			(-3)
+#define T4			(-4)
 
-#	define IADDR		(inst->address().offset())
+#define IADDR		(inst->address().offset())
 
-#	define NE			sem::NE
-#	define EQ			sem::EQ
-#	define LT			sem::LT
-#	define LE			sem::LE
-#	define GE			sem::GE
-#	define GT			sem::GT
-#	define ULT			sem::ULT
-#	define UGE			sem::UGE
+#define NE			sem::NE
+#define EQ			sem::EQ
+#define LT			sem::LT
+#define LE			sem::LE
+#define GE			sem::GE
+#define GT			sem::GT
+#define ULT			sem::ULT
+#define UGE			sem::UGE
 
 #define SCRATCH(a)		block.add(sem::scratch(a))
-#	define SET(a, b)	block.add(sem::set(a, b))
-#	define SETI(a, b)	block.add(sem::seti(a, b))
-#	define ADD(a, b, c)	block.add(sem::add(a, b, c))
-#	define SUB(a, b, c)	block.add(sem::sub(a, b, c))
-#	define SHL(a, b, c)	block.add(sem::shl(a, b, c))
-#	define SHR(a, b, c)	block.add(sem::shr(a, b, c))
-#	define CMP(a, b, c)	block.add(sem::cmp(a, b, c))
-#	define IF(a, b, c)	block.add(sem::_if(a, b, c))
-#	define SCRATCH8(a)	SCRATCH(a); SCRATCH(a + 1)
-#	define BRANCH(a)	block.add(sem::branch(a))
-#	define CONT			block.add(sem::cont())
-#	define LOADW(d, a)	block.add(sem::load(d, a, 4))
-#	define LOADD(d, a)	block.add(sem::load(d, a, 8))
-#	define LOADSB(d, a)	block.add(sem::load(d, a, 1))
-#	define LOADUB(d, a)	block.add(sem::load(d, a, 1))
-#	define LOADSH(d, a)	block.add(sem::load(d, a, 2))
-#	define LOADUH(d, a)	block.add(sem::load(d, a, 2))
-#	define STOREW(d, a)	block.add(sem::store(d, a, 4))
-#	define STORED(d, a)	block.add(sem::store(d, a, 8))
-#	define STOREB(d, a)	block.add(sem::store(d, a, 1))
-#	define STOREH(d, a)	block.add(sem::store(d, a, 2))
+#define SET(a, b)			block.add(sem::set(a, b))
+#define SETI(a, b)		block.add(sem::seti(a, b))
+#define ADD(a, b, c)	block.add(sem::add(a, b, c))
+#define SUB(a, b, c)	block.add(sem::sub(a, b, c))
+#define SHL(a, b, c)	block.add(sem::shl(a, b, c))
+#define SHR(a, b, c)	block.add(sem::shr(a, b, c))
+#define CMP(a, b, c)	block.add(sem::cmp(a, b, c))
+#define IF(a, b, c)		block.add(sem::_if(a, b, c))
+#define SCRATCH8(a)		SCRATCH(a); SCRATCH(a + 1)
+#define BRANCH(a)			block.add(sem::branch(a))
+#define CONT					block.add(sem::cont())
+#define LOADW(d, a)		block.add(sem::load(d, a, 4))
+#define LOADD(d, a)		block.add(sem::load(d, a, 8))
+#define LOADSB(d, a)	block.add(sem::load(d, a, 1))
+#define LOADUB(d, a)	block.add(sem::load(d, a, 1))
+#define LOADSH(d, a)	block.add(sem::load(d, a, 2))
+#define LOADUH(d, a)	block.add(sem::load(d, a, 2))
+#define STOREW(d, a)	block.add(sem::store(d, a, 4))
+#define STORED(d, a)	block.add(sem::store(d, a, 8))
+#define STOREB(d, a)	block.add(sem::store(d, a, 1))
+#define STOREH(d, a)	block.add(sem::store(d, a, 2))
+#define TRAP(c)				block.add(sem::trap(c))
+#define ASR(a,b,c)		block.add(sem::asr(a,b,c))
+#define NEG(d,a)			block.add(sem::neg(d,a))
+#define NOT(d,a)			block.add(sem::_not(d,a))
+#define AND(d,a,b)		block.add(sem::_and(d,a,b))
+#define OR(d,a,b)			block.add(sem::_or(d,a,b))
+#define XOR(d,a,b)		block.add(sem::_xor(d,a,b))
+#define MUL(d,a,b)		block.add(sem::mul(d,a,b))
+#define MULU(d,a,b)		block.add(sem::mulu(d,a,b))
+#define DIV(d,a,b)		block.add(sem::div(d,a,b))
+#define DIVU(d,a,b)		block.add(sem::divu(d,a,b))
+#define MOD(d,a,b)		block.add(sem::mod(d,a,b))
+#define MODU(d,a,b)		block.add(sem::modu(d,a,b))
 
-/*#	define E(n)			D(n)
-#	define S4(n)		(((int32_t)instr->instrinput[n].val.uint8 << 28) >> 28)
-#	define S6(n)		(((int8_t)instr->instrinput[n].val.uint8 << 2) >> 2)
-#	define S8(n)		(instr->instrinput[n].val.int8)
-#	define S9(n)		(((int32_t)instr->instrinput[n].val.uint16 << 23) >> 23)
-#	define S15(n)		(((int32_t)instr->instrinput[n].val.uint16 << 17) >> 17)
-#	define S16(n)		instr->instrinput[n].val.int16
-#	define U2(n)		instr->instrinput[n].val.uint8
-#	define U4(n)		instr->instrinput[n].val.uint8
-#	define U6(n)		instr->instrinput[n].val.uint8
-#	define U8(n)		instr->instrinput[n].val.uint8
-#	define U16(n)		instr->instrinput[n].val.uint16
-#	define SAVE_CONTEXT	\
+#define E(n)			D(n)
+#define S4(n)		(((int32_t)instr->instrinput[n].val.uint8 << 28) >> 28)
+#define S6(n)		(((int8_t)instr->instrinput[n].val.uint8 << 2) >> 2)
+#define S8(n)		(instr->instrinput[n].val.int8)
+#define S9(n)		(((int32_t)instr->instrinput[n].val.uint16 << 23) >> 23)
+#define S15(n)		(((int32_t)instr->instrinput[n].val.uint16 << 17) >> 17)
+#define S16(n)		instr->instrinput[n].val.int16
+#define U2(n)		instr->instrinput[n].val.uint8
+#define U4(n)		instr->instrinput[n].val.uint8
+#define U6(n)		instr->instrinput[n].val.uint8
+#define U8(n)		instr->instrinput[n].val.uint8
+#define U16(n)		instr->instrinput[n].val.uint16
+#define SAVE_CONTEXT	\
 		SETI(T1, FCX); SETI(T2, 4); LOADW(T3, T1); \
 		STOREW(FCX, T1); ADD(T1, T1, T2); \
 		STOREW(PSW, T1); ADD(T1, T1, T2); \
@@ -644,14 +660,14 @@ otawa::Inst *Segment::decode(address_t address) {
 		STOREW(D(14), T1); ADD(T1, T1, T2); \
 		STOREW(D(15), T1); \
 		SETI(T1, 1 << 6); ADD(FCX, FCX, T1)
-#	define LOAD_CONTEXT	\
+#define LOAD_CONTEXT	\
 		SETI(T1, FCX); SETI(T2, 4); \
 		LOADW(T3, T1); ADD(T1, T1, T2); \
 		LOADW(PSW, T1); ADD(T1, T1, T2); \
 		LOADW(A(10), T1); ADD(T1, T1, T2); \
 		LOADW(A(11), T1); ADD(T1, T1, T2); \
-		LOADW(D(8), T1); ADD(T1, T1, T2); \
-		LOADW(D(9), T1); ADD(T1, T1, T2); \
+		LOADW(D(8), T1); ADD(T1, T1, T2);  \
+		LOADW(D(9), T1); ADD(T1, T1, T2);  \
 		LOADW(D(10), T1); ADD(T1, T1, T2); \
 		LOADW(D(11), T1); ADD(T1, T1, T2); \
 		LOADW(A(12), T1); ADD(T1, T1, T2); \
@@ -663,23 +679,19 @@ otawa::Inst *Segment::decode(address_t address) {
 		LOADW(D(14), T1); ADD(T1, T1, T2); \
 		LOADW(D(15), T1); \
 		STOREW(FCX, T1); SET(FCX, T3)
-#	define INT10(d, f4, f6)	SETI(d, (S4(f4) << 6) | U6(f6))
-#	define INT18(d, f0, f1, f2, f3)	SETI(d, (U4(f0) << 28) | (U4(f1) << 10) | (U4(f2) << 6) | U6(f3))
-#	define INT16(d, f0, f1, f2)		SETI(d, (S6(f0)<< 10) | (U4(f1) << 6) | U6(f2))
-*/
+#define INT10(d, f4, f6)	SETI(d, (S4(f4) << 6) | U6(f6))
+#define INT18(d, f0, f1, f2, f3)	SETI(d, (U4(f0) << 28) | (U4(f1) << 10) | (U4(f2) << 6) | U6(f3))
+#define INT16(d, f0, f1, f2)		SETI(d, (S6(f0)<< 10) | (U4(f1) << 6) | U6(f2))
+
 #include "sem.h"
 
 
 /****** loader definition ******/
 
-// alias table
-static string table[] = { "elf_44" };
-static elm::genstruct::Table<string> loader_aliases(table, 1);
-
 // loader definition
 class Loader: public otawa::Loader {
 public:
-	Loader(void): otawa::Loader("tricore", Version(2, 0, 0), OTAWA_LOADER_VERSION, loader_aliases) {
+	Loader(void): otawa::Loader("tricore", Version(2, 0, 0), OTAWA_LOADER_VERSION) {
 	}
 
 	virtual otawa::Process *load(Manager *man, CString path, const PropList& props) {

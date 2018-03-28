@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_INSTALL_RPATH "\\$ORIGIN/../..")
 set(CMAKE_MACOSX_RPATH true)
 
+if(CMAKE_VERSION LESS "3.1")
+	add_compile_options(--std=c++11)
+	message(STATUS "C++11 set using cflags")
+else()
+	set(CMAKE_CXX_STANDARD 11)
+	message(STATUS "C++ set using CMAKE_CXX_STANDARD")
+endif()
+
 # configuration
 set(TARGET_PATH	"${CMAKE_SOURCE_DIR}/../tricore/" CACHE PATH "tricore GLISS2 directory")
 set(GLISS_PATH	"${CMAKE_SOURCE_DIR}/../gliss2" CACHE PATH "GLISS source directory")

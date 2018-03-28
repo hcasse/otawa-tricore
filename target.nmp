@@ -1,47 +1,52 @@
+extend loop , loopu 
+	otawa_target = __IADDR + coerce(int(32),const)*2
+
+extend call , fcall 
+	otawa_target = __IADDR + coerce(int(32),const)*2
+	
+extend call16
+	otawa_target = __IADDR + coerce(int(32),const)*2
+
+extend calla , fcalla , ja , jla
+	otawa_target = const<23..20>::0b0000000::const<19..0>::0b0
+
+extend calli , fcalli , ji , ji_16 , jli
+	otawa_target=0
+//	otawa_target = a<31..1>::0b0
+	
+extend fret , fret16	
+	otawa_target=0
+//	otawa_target =  A[11]<31..1>::0b0
+
+extend j 
+	otawa_target = __IADDR + coerce(int(32),const)*2
+	
+extend j16
+	otawa_target = __IADDR + coerce(int(32),const)*2
+
+extend jeq_reg_reg , jeq_reg_const , jeq_a , jge_const4 , jge_reg , jge_u , jge_u_const4 , jlt_reg , jlt_const4 , jlt_u , jlt_u_const4 , jne_const4 , jne_reg , jne_a , jned_const4 , jned_reg , jnei_reg , jnei_const4 ,  jnz_a , jnz_t , jz_a , jz_t
+	otawa_target = __IADDR + coerce(int(32),disp<15..0>)*2
+
+extend jnz_16_1
+	otawa_target = __IADDR + coerce(int(32),disp)*2
+
+extend jz_disp8_16
+	otawa_target = __IADDR + coerce(int(32),disp)*2
 
 extend jl
-	otawa_target = __IADDR + disp24 * 2
+	otawa_target = __IADDR + coerce(int(32),disp)*2
 
-extend call
-	otawa_target = __IADDR + const
+extend jeq16_const_1 , jeq16_const_2 , jeq16_reg_1 , jeq16_reg_2 , jgtz , jgez , jlez , jltz , jne16_const_1 , jne16_reg_1 , jnz_16_2 , jnz_a_16 , jnz_t_16 , jz_disp4_16 , jz_t_16 , jz_a_16
+	otawa_target = __IADDR + coerce(card(32),disp)*2
+	
+extend jne16_const_2 , jne16_reg_2
+	otawa_target = __IADDR + coerce(card(32),disp+16)*2
+	
 
-extend calla
-	otawa_target = const<20..23>::0b0000000::const<0..19>::0b0
+	
+extend ret , ret_16 , rfe , rfe16 , rfm
+	otawa_target=0
+	//otawa_target = A[11]<31..1>::0b0
 
-extend calli, ji, ret, ret_16
-	otawa_target = 0
-
-extend j
-	otawa_target = __IADDR + const
-
-extend ja
-	otawa_target = const<20..23>::0b0000000::const<16..23>::0b0
-
-extend jeq_a, jne_a,
-jeq_reg, jeq_const4, 
-jge_reg, jge_const4,
-jge_u, jge_u_const4,
-jlt_reg, jlt_const4,
-jlt_u, jlt_u_const4,
-jne_reg, jne_const4,
-jned_reg, jned_const4,
-jnei_reg, jnei_const4,
-jnz_a, jnz_t,
-jz_a, jz_t,
-loop
-	otawa_target = __IADDR + disp
-
-extend call16
-	otawa_target = __IADDR + coerce(int(32), disp)
-
-extend j16
-	otawa_target = __IADDR + const
-
-extend jeq16_1, jeq16_2, jgez, jgtz, jlez, jltz,
-jne16_const, jne16_reg, jz_t_16, jz_disp8_16, jz_disp4_16,
-loop_16, jnz_16_1, jnz_16_2, jz_a_16, jnz_a_16,
-jnz_t_16
-	otawa_target = __IADDR + disp
-
-extend ji_16
-	otawa_target = addr & 0xfffffffe
+extend loop_16
+	otawa_target = __IADDR + (0b111111111111111111111111111::disp::0b0)

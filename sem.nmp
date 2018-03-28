@@ -1,67 +1,308 @@
 
 canon int(32) "T1"
 canon int(32) "T2"
+canon int(32) "T3"
+canon int(32) "T4"
 canon int(32) "_PSW"
+canon int(32) "FCX"
+canon card(32) "NE"
+canon card(32) "EQ"
+canon card(32) "GE"
+canon card(32) "UGE"
+canon card(32) "LT"
+canon card(32) "ULT"
+canon card(32) "GT"
+canon card(32) "LE"
+canon card(32) "ULE"
+
 
 macro D(i) 				= "D"(i)
 macro A(i) 				= "A"(i)
 macro _PSW				= "_PSW"
+macro FCX				= "FCX"
 macro T1				= "T1"
 macro T2				= "T2"
+macro T3				= "T3"
+macro T4				= "T4"
 macro ADD(p1, p2, p3)	= "ADD"(p1, p2, p3)
 macro SUB(p1, p2, p3)	= "SUB"(p1, p2, p3)
 macro SHL(p1, p2, p3)	= "SHL"(p1, p2, p3)
+macro SHR(p1, p2, p3) = "SHR"(p1, p2, p3)
 macro SCRATCH(a)		= "SCRATCH"(a)
 macro SET(p1, p2)		= "SET"(p1, p2)
 macro SETI(p1, p2)		= "SETI"(p1, p2)
+macro CMP(p1, p2, p3) = "CMP"(p1, p2, p3)
+macro IF(p1, p2, p3) = "IF"(p1, p2, p3)
+macro SCRATCH8(a) = "SCRATCH8"(a)
+macro BRANCH(a) = "BRANCH"(a)
+macro CONT = "CONT"
+macro LOADW(d,a) = "LOADW"(d,a)
+macro LOADD(d,a) = "LOADD"(d,a)
+macro LOADSB(d,a) = "LOADSB"(d,a)
+macro LOADUB(d,a) = "LOADUB"(d,a)
+macro LOADSH(d,a) = "LOADSH"(d,a)
+macro LOADUH(d,a) = "LOADUH"(d,a)
+macro STOREW(d,a) = "STOREW"(d,a)
+macro STORED(d,a) = "STORED"(d,a)
+macro STOREB(d,a) = "STOREB"(d,a)
+macro STOREH(d,a) = "STOREH"(d,a)
+macro TRAP(a) = "TRAP"(a)
+macro ASR(a,b,c) = "ASR"(a,b,c)
+macro NEG(d,a) = "NEG"(d,a)
+macro NOT(d,a) = "NOT"(d,a)
+macro AND(d,a,b) = "AND"(d,a,b)
+macro OR(d,a,b) = "OR"(d,a,b)
+macro XOR(d,a,b) = "XOR"(d,a,b)
+macro MUL(d,a,b) = "MUL"(d,a,b)
+macro MULU(d,a,b) = "MULU"(d,a,b)
+macro DIV(d,a,b) = "DIV"(d,a,b)
+macro DIVU(d,a,b) = "DIVU"(d,a,b)
+macro MOD(d,a,b) = "MOD"(d,a,b)
+macro MODU(d,a,b) = "MODU"(d,a,b)
+macro S15(n) = "S15"(n)
+
+macro LOAD_UPPER_CONTEXT = \
+		LOADW(T3, T1); ADD(T1, T1, 4); \
+		LOADW(_PSW, T1); ADD(T1, T1, 4); \
+		LOADW(A(10), T1); ADD(T1, T1, 4); \
+		LOADW(A(11), T1); ADD(T1, T1, 4); \
+		LOADW(D(8), T1); ADD(T1, T1, 4);  \
+		LOADW(D(9), T1); ADD(T1, T1, 4);  \
+		LOADW(D(10), T1); ADD(T1, T1, 4); \
+		LOADW(D(11), T1); ADD(T1, T1, 4); \
+		LOADW(A(12), T1); ADD(T1, T1, 4); \
+		LOADW(A(13), T1); ADD(T1, T1, 4); \
+		LOADW(A(14), T1); ADD(T1, T1, 4); \
+		LOADW(A(15), T1); ADD(T1, T1, 4); \
+		LOADW(D(12), T1); ADD(T1, T1, 4); \
+		LOADW(D(13), T1); ADD(T1, T1, 4); \
+		LOADW(D(14), T1); ADD(T1, T1, 4); \
+		LOADW(D(15), T1); 
+		
+macro SAVE_UPPER_CONTEXT =	\
+		STOREW(FCX, T1); ADD(T1, T1, 4); \
+		STOREW(_PSW, T1); ADD(T1, T1, 4); \
+		STOREW(A(10), T1); ADD(T1, T1, 4); \
+		STOREW(A(11), T1); ADD(T1, T1, 4); \
+		STOREW(D(8), T1); ADD(T1, T1, 4); \
+		STOREW(D(9), T1); ADD(T1, T1, 4); \
+		STOREW(D(10), T1); ADD(T1, T1, 4); \
+		STOREW(D(11), T1); ADD(T1, T1, 4); \
+		STOREW(A(12), T1); ADD(T1, T1, 4); \
+		STOREW(A(13), T1); ADD(T1, T1, 4); \
+		STOREW(A(14), T1); ADD(T1, T1, 4); \
+		STOREW(A(15), T1); ADD(T1, T1, 4); \
+		STOREW(D(12), T1); ADD(T1, T1, 4); \
+		STOREW(D(13), T1); ADD(T1, T1, 4); \
+		STOREW(D(14), T1); ADD(T1, T1, 4); \
+		STOREW(D(15), T1); 
+		
+macro LOAD_LOWER_CONTEXT = \
+		LOADW(FCX, T1); ADD(T1, T1, 4); \
+		LOADW(A(11), T1); ADD(T1, T1,4 ); \
+		LOADW(A(2), T1); ADD(T1, T1, 4); \
+		LOADW(A(3), T1); ADD(T1, T1, 4); \
+		LOADW(D(0), T1); ADD(T1, T1, 4);  \
+		LOADW(D(1), T1); ADD(T1, T1, 4);  \
+		LOADW(D(2), T1); ADD(T1, T1, 4); \
+		LOADW(D(3), T1); ADD(T1, T1,4 ); \
+		LOADW(A(4), T1); ADD(T1, T1, 4); \
+		LOADW(A(5), T1); ADD(T1, T1,4 ); \
+		LOADW(A(6), T1); ADD(T1, T1, 4); \
+		LOADW(A(7), T1); ADD(T1, T1,4); \
+		LOADW(D(4), T1); ADD(T1, T1, 4); \
+		LOADW(D(5), T1); ADD(T1, T1, 4); \
+		LOADW(D(6), T1); ADD(T1, T1, 4); \
+		LOADW(D(7), T1); 
+		
+macro SAVE_LOWER_CONTEXT =	\
+		STOREW(FCX, T1); ADD(T1, T1, 4); \
+		STOREW(A(11), T1); ADD(T1, T1, 4); \
+		STOREW(A(2), T1); ADD(T1, T1, 4); \
+		STOREW(A(3), T1); ADD(T1, T1, 4); \
+		STOREW(D(0), T1); ADD(T1, T1, 4); \
+		STOREW(D(1), T1); ADD(T1, T1, 4); \
+		STOREW(D(2), T1); ADD(T1, T1, 4); \
+		STOREW(D(3), T1); ADD(T1, T1, 4); \
+		STOREW(A(4), T1); ADD(T1, T1, 4); \
+		STOREW(A(5), T1); ADD(T1, T1, 4); \
+		STOREW(A(6), T1); ADD(T1, T1, 4); \
+		STOREW(A(7), T1); ADD(T1, T1, 4); \
+		STOREW(D(4), T1); ADD(T1, T1, 4); \
+		STOREW(D(5), T1); ADD(T1, T1, 4); \
+		STOREW(D(6), T1); ADD(T1, T1, 4); \
+		STOREW(D(7), T1); 
+
+macro NE = "NE"
+macro EQ = "EQ"
+macro GE = "GE"
+macro UGE = "UGE"
+macro LT = "LT"
+macro ULT = "ULT"
+macro GT = "GT"
+macro LE = "LE"
+macro ULE = "ULE"
+
+
+
+
+
+
+
 
 // scratch d[c]
-extend abs_reg, absdif_const9, absdif_reg, addc_reg, addc_const9, addf,
-clz, cmpf, madd_, mulf, pack,
-and_eq_const, and_eq_reg, and_reg, and_const9,
-and_lt_u_reg, and_lt_u_const9, andn_reg, andn_const9,
-andt, and_nor_t,
+extend clz, clz_h, cls , cls_h, clo, clo_h, 
+mulf, 
+pack, 
+and_eq_const, and_eq_reg, 
+and_lt_u_reg, and_lt_u_const9, and_lt_reg , and_lt_const, and_ne_reg , and_ne_const, 
+andt,andn_t, 
+and_nor_t, and_and_t , and_andn_t , and_or_t ,
+and_ge_reg , and_ge_const , and_geu_reg , and_geu_const,
 dextr_reg, dextr_pos,
-eq_a, eq_reg, eq_const9, 		// eqanyb_reg, eqanyb_const, eqanyh_reg, eqanyh_const,
 extr_reg, extr_width, extr_pos, extr_u_reg, extr_u_width, extr_u_pos,
-ge_reg, ge_const9, gea, geu_reg, ge_u_const9,
-insert_reg, insert_width, insert_pos, insert_const4, insert_const4_width, insert_const4_pos, ins_t,
+insert_reg, insert_width, insert_pos, insert_const4, insert_const4_width, insert_const4_pos, ins_t,insn_t,
 ne_a, ne_reg, ne_const9, neza,
-or_eq_const, or_eq_reg, or_reg, or_const9, ort, or_lt_reg, or_lt_const9,
-or_lt_u_reg, or_lt_u_const9, or_ne_reg, or_ne_const9,
-nor_reg, nor_const, nort,
+or_eq_const, or_eq_reg, 
+ort,
+or_lt_reg, or_lt_const9, or_lt_u_reg, or_lt_u_const9, or_ne_reg, or_ne_const9,
+nort,
 sel_reg, sel_const9, seln_reg, seln_const9,
-sh_eq_const, sh_reg, sh_const9,
-xor_reg, xor_const9, xor_t,
-lt_reg, lt_const, ltu_reg, ltu_const,
-orn, minu_reg, max_reg, max_const, maxu_reg, maxu_const
+sh_eq_const, sh_eq_reg ,
+sh_reg, sh_const9,
+sh_ge_reg , sh_ge_const , sh_ge_u_reg , sh_ge_u_const,
+sh_h_reg , sh_h_const, 
+sh_lt_reg , sh_lt_const , sh_lt_u_reg , sh_lt_u_const, sh_ne_reg , sh_ne_const,
+sh_and_t , sh_andn_t , sh_nand_t , sh_nor_t , sh_or_t , sh_orn_t , sh_xnor_t , sh_xor_t, 
+xor_t, 
+min_u_reg,min_u_const , min_reg , min_const, max_reg, max_const, maxu_reg, maxu_const ,
+max_b , max_bu , max_h , max_hu,min_bu , min_b , min_h , min_hu,
+nand_t, 
+or_and_t , or_andn_t , or_nor_t , or_or_t , 
+or_ge_reg , or_ge_const , or_ge_u_reg , or_ge_u_const ,  
+orn_t, 
+sat_b , sat_bu , sat_h , sat_hu, 
+lt_a,lt_b,lt_bu,lt_h,lt_hu,lt_w,lt_wu,
+bmerge, parity, mfcr, 
+subs_u, 
+xnor_t, 
+xor_eq_const , xor_eq_reg , xor_ge_reg , xor_ge_const , xor_geu_reg , xor_geu_const,xor_lt_reg , xor_lt_const , xor_ltu_reg , xor_ltu_const , xor_ne_const , xor_ne_reg, 
+addf, divf, maddf, msubf, subf,
+eqanyb_reg, eqanyb_const, eqanyh_reg, eqanyh_const, eq_h , eq_b , eqz_a 
 	sem = { SCRATCH(D(c.i)); }
+	
+extend disable2
+	sem = { SCRATCH(D(a.i)); }
+	
+//op 16 bits
+extend sat16_b , sat16_bu , sat16_h , sat16_hu , sh_16 , sha_16 , subs16
+	sem = { SCRATCH(D(a.i)); }
+
 
 // scratch d[2c], d[2c + 1]
-extend madd_u_reg, unpack,
+extend unpack,
 imask_1, imask_2, imask_3, imask_4,
-dvadj
+dvadj, bsplit,
+ixmax, ixmax_u, ixmin, ixmin_u,
+dvstep_ , dvstep_u
 	sem = { SCRATCH(D(c.i * 2)); SCRATCH(D(c.i * 2 + 1)); }
 
 // scratch PSW, d[2c], D[2c + 1]
 extend dvinit_bu, dvinit_, dvinit_b, dvinit_h, dvinit_hu, dvinit_u,
-dvstep_u, dvstep_,
 mul_e_reg, mul_e_const9, mulh_ll, mulh_lu, mulh_ul, mulh_uu, mul_u, mul_u_const9
 	sem = { SCRATCH(_PSW); SCRATCH(D(c.i * 2)); SCRATCH(D(c.i * 2 + 1)); }
 
-// scratch PSW
-extend cmpf
-	sem = { SCRATCH(_PSW); }
 
 // scratch PSW, d[c]
-extend adds_reg, adds_const9, 		// addsh_s, addsh_u,
-cadd_reg, cadd_const9, caddn_const9, caddn_reg,
-mul_reg, muls_reg, mul_const9,
-sha_reg, sha_const9 ,
-csub, msub_reg, subh, subc, subs, subu, subsh, subshu	// subb, 
+extend adds_reg, adds_const9, addsh_s, addsh_u,adds_u_reg,adds_u_const, 
+muls_reg,muls_const9,muls_u_reg,muls_u_const, 
+sha_reg, sha_const9 , 
+sha_h_reg , sha_h_const , shas_reg , shas_const, 
+csub, csubn, subb, subh, subc, subs, subsh, subshu,
+cmpf,
+utof, qseedf, q31tof, itof, ftouz, ftou, ftoq31z, ftoq31, ftoiz, ftoi, 
+add_b,add_h,
+abs_reg, absdif_const9, absdif_reg, abs_b , abs_h , absdifs_reg , absdifs_const9 , absdif_b , absdif_h , absdifs_h , abss , abss_h
 	sem = { SCRATCH(_PSW); SCRATCH(D(c.i)); }
+	
+extend updfl, rstv, mtcr
+	sem = { SCRATCH(_PSW); }
+	
 
-// ALU 32-bits
+
+
+//////////////
+// mul
+//////////////
+
+extend mul_reg
+	sem = { MUL(D(c.i), D(a.i), D(b.i)); SCRATCH(_PSW); }
+	
+extend mul_const9
+	sem = { SETI(T1, const); MUL(D(c.i), D(a.i), T1); SCRATCH(_PSW);}
+	
+extend mul16
+	sem = { SCRATCH(_PSW); SET(T1,D(a.i)); MUL(T2,T1,D(b.i)); SET(D(a.i),T2); }
+	
+extend  mulrh_1 ,mulrh_2,mulrh_3,mulrh_4,  mulrq_1 , mulrq_2
+	sem = { SCRATCH(D(c.i)); SCRATCH(_PSW);}
+
+extend mulmh_1 ,mulmh_2,mulmh_3,mulmh_4
+	sem = { SCRATCH(_PSW); SCRATCH(D(c.i * 2)); SCRATCH(D(c.i * 2 + 1)); }
+
+
+
+
+
+//////////////
+// msub
+//////////////
+
+extend msub_reg
+	sem = { SCRATCH(_PSW); MUL(T1, D(a.i), D(b.i)); SUB(D(c.i),D(d.i),T1); }
+	
+extend msub_const
+	sem = { SCRATCH(_PSW); SETI(T1,const.v); MUL(T2,D(a.i),T1); SUB(D(c.i),D(d.i),T2); }
+	
+extend msubq_1
+	sem = { SCRATCH(_PSW); MUL(T1, D(a.i), D(b.i)); SETI(T2,n); SHL(T1,T1,T2); SHR(T2,T1,32); SUB(D(c.i),D(d.i),T2); }
+	
+extend msub_reg64 , msub_const64, msubs_reg64,msubs_const64, msubh_1 , msubh_2 , msubh_3 , msubh_4 , msubsh_1 , msubsh_2 , msubsh_3 , msubsh_4 ,msubq_2, msubq_4, msubq_6, msubq_8, msubq_10, msubsq_2, msubsq_4, msubsq_6, msubsq_8, msubsq_10, msubu_reg , msubu_const, msubsu64_const, msubsu64_reg , msubadh_1 , msubadh_2 , msubadh_3 , msubadh_4 , msubadsh_1 , msubadsh_2 , msubadsh_3 , msubadsh_4 , msubadmh_1 , msubadmh_2 , msubadmh_3 , msubadmh_4 , msubadmsh_1 , msubadmsh_2 , msubadmsh_3 , msubadmsh_4 , msubmh_1 , msubmh_2 , msubmh_3 , msubmh_4 , msubmsh_1 , msubmsh_2 , msubmsh_3 , msubmsh_4 
+	sem = { SCRATCH(_PSW); SCRATCH(D(c.i * 2)); SCRATCH(D(c.i * 2 + 1)); }
+	
+extend msubs_reg, msubs_const, msubq_3, msubq_5, msubq_7, msubq_9, msubsq_1, msubsq_3, msubsq_5, msubsq_7, msubsq_9, msubsu_const, msubsu_reg, msubadrh_1 , msubadrh_2 , msubadrh_3 , msubadrh_4 , msubadrsh_1 , msubadrsh_2 , msubadrsh_3 , msubadrsh_4 , msubrh_1 , msubrh_2 , msubrh_3 , msubrh_4 , msubrsh_1 , msubrsh_2 , msubrsh_3 , msubrsh_4 , msubrh_5 , msubrsh_5, msubrq_1 , msubrq_2 , msubrsq_1 , msubrsq_2
+	sem = { SCRATCH(_PSW); SCRATCH(D(c.i)); }
+	
+	
+	
+	
+	
+	
+///////////////
+// add
+///////////////
+
+extend adds16
+	sem = { SCRATCH(_PSW); SCRATCH(D(a.i)); }
+
+extend add16_1
+	sem = { SCRATCH(_PSW); ADD(D(a.i), D(a.i), D(b.i)); }
+	
+extend add16_2
+	sem = { SCRATCH(_PSW); SETI(T1, const.v); ADD(D(a.i), D(a.i), D(T1)); }
+
+extend add16_3
+	sem = { SCRATCH(_PSW); ADD(D(15), D(a.i), D(b.i));}
+	
+extend add16_4
+	sem = { SCRATCH(_PSW); SETI(T1, const.v); ADD(D(15), D(a.i), D(T1)); }
+	
+extend add16_5
+	sem = { SCRATCH(_PSW); ADD(D(a.i), D(15), D(b.i));}
+	
+extend add16_6
+	sem = { SCRATCH(_PSW); SETI(T1, const.v); ADD(D(a.i),D(15), D(T1)); }
+
 extend add_reg
 	sem = { SCRATCH(_PSW); ADD(D(c.i), D(a.i), D(b.i)); }
 
@@ -69,7 +310,13 @@ extend add_const9
 	sem = { SCRATCH(_PSW); SETI(T1, const.v); ADD(c.i, a.i, T1); }
 
 extend add_a_reg
-	sem = { ADD(D(c.i), D(a.i), D(b.i)); }
+	sem = { ADD(A(c.i), A(a.i), A(b.i)); }
+	
+extend add_a_16_const
+	sem = { SETI(T1, const); ADD(D(a.i), D(a.i), T1); }
+	
+extend add_a_16_reg
+	sem = { ADD(A(a.i), A(a.i), A(b.i)); }
 
 extend addi
 	sem = { SCRATCH(_PSW); SETI(T1, const); ADD(D(c.i), D(a.i), T1); }
@@ -78,10 +325,13 @@ extend addih
 	sem = { SCRATCH(_PSW); SETI(T1, const.v); SETI(T2, 16); SHL(T1, T1, T2); ADD(D(c.i), D(a.i), T1); }
 
 extend addih_a
-	otawa_sem = { SETI(T1, const.v); SETI(T2, 16); SHL(T1, T1, T2); ADD(A(0), T1, A(2)); }
+	sem = { SETI(T1, const.v); SETI(T2, 16); SHL(T1, T1, T2); ADD(A(0), T1, A(2)); }
 
 extend addsc_a
-	otawa_sem = { SETI(T1, 4); SHL(T2, A(a.i), T1); ADD(A(c.i), A(b.i), T2); }
+	sem = { SETI(T1, n); SHL(T2, D(a.i), T1); ADD(A(c.i), A(b.i), T2); }
+
+extend addsca
+	sem = { SETI(T1, n); SHL(T2, D(15), T1); ADD(A(a.i), A(b.i), T2);}
 
 extend addsc_at
 	sem = { SCRATCH(A(c.i)); }
@@ -92,20 +342,40 @@ extend addx_reg
 extend addx_const9
 	sem = { SCRATCH(_PSW); SETI(T1, const.v); ADD(D(c.i), D(a.i), T1); }
 
+
+
+
+
+/////////////
+// mov
+/////////////
+
 extend mov_reg
 	sem = { SET(D(c.i), D(b.i)); }
 
-extend mov_const16
+extend mov_const32
 	sem = { SETI(D(c.i), const); }
 
-extend mov_a
+extend mov_a 
 	sem = { SET(A(c.i), D(b.i)); }
+	
+extend mov_a_16_4
+	sem = { SET(A(a.i), D(b.i)); }
+	
+extend mov_a_16_5
+	sem = { SETI(A(a.i),const4);}
 
 extend mov_aa
 	sem = { SET(A(c.i), A(b.i)); }
+	
+extend mov_aa_16
+	sem = { SET(A(a.i), A(b.i)); }
 
 extend mov_d
 	sem = { SET(D(c.i), A(b.i)); }
+	
+extend mov_d_16
+	sem = { SET(D(a.i), A(b.i)); }
 
 extend mov_u
 	sem = { SETI(D(c.i), const); }
@@ -116,8 +386,48 @@ extend movh_const16
 extend movh_a
 	otawa_sem = { SETI(T1, const); SETI(T2, 16); SHL(A(c.i), T1, T2); }
 
-extend rsub
+extend mov_const64 , mov_reg64 , mov_rr64
+	sem = {SCRATCH(D(c.i * 2)); SCRATCH(D(c.i * 2 + 1));}
+	
+extend mov_16_1
+	sem = { SET(D(a.i), D(b.i)); }
+	
+extend mov_16_2
+	sem = { SETI(D(a.i), const); }
+	
+extend mov_16_3
+	sem = { SETI(D(15), const); }
+	
+extend mov_16_4
+	sem = { SCRATCH(D(a.i)); }
+
+extend cmov16_reg
+	sem = { SETI(T2,0); CMP(T1,D(15),T2); IF(NE,T1,1); SET(D(a.i),D(b.i)); }  
+	
+extend cmov16_const
+	sem = { SETI(T2,0); CMP(T1,D(15),T2); IF(NE,T1,1); SETI(D(a.i),const.v); }
+	
+extend cmovn16_reg
+	sem = { SETI(T2,0); CMP(T1,D(15),T2); IF(EQ,T1,1); SET(D(a.i),D(b.i)); }  
+	
+extend cmovn16_const
+	sem = { SETI(T2,0); CMP(T1,D(15),T2); IF(EQ,T1,1); SETI(D(a.i),const.v); }
+	
+	
+	
+
+
+
+
+
+/////////////
+//sub
+/////////////
+extend r_sub , rsubs , rsubs_u
 	sem = { SCRATCH(_PSW); SETI(T1, const.v); SUB(D(c.i), T1, D(a.i)); }
+
+extend rsub_16
+	sem = { SCRATCH(_PSW); SUB(D(a.i), 0, D(a.i)); }
 
 extend sub_reg
 	sem = { SCRATCH(_PSW); SUB(D(c.i), D(a.i), D(b.i)); }
@@ -127,3 +437,1039 @@ extend subx
 
 extend sub_a
 	sem = { SUB(A(c.i), A(a.i), A(b.i)); }
+	
+extend sub_a_16
+	sem = { SETI(T1, const.v); SUB(A(10), A(10), T1); }
+
+extend sub_16_1
+	sem = { SCRATCH(_PSW); SUB(D(a.i), D(a.i), D(b.i)); }
+	
+extend sub_16_2
+	sem = { SCRATCH(_PSW); SUB(D(15), D(a.i), D(b.i)); }
+	
+extend sub_16_3
+	sem = { SCRATCH(_PSW); SUB(D(a.i), D(15), D(b.i)); }
+	
+	
+	
+	
+	
+/////////
+//and
+/////////
+
+extend and_reg
+	sem = { AND(D(c.i),D(a.i),D(b.i)); }
+
+extend and_const9
+	sem = { SETI(T1, const.v); AND(D(c.i),D(a.i),T1); }
+	
+extend and16_1
+	sem = { SET(T1,D(a.i)); AND(T2,T1,D(b.i)); SET(D(a.i),T2); }
+	
+extend and16_2
+	sem = { SETI(T1, const.v); AND(D(15),D(15),T1); }
+	
+extend andn_reg
+	sem = { NOT(T1,D(b.i)); AND(D(c.i),D(a.i),T1); }
+
+extend andn_const9
+	sem = { SETI(T1,const.v); NOT(T2,T1); AND(D(c.i),D(a.i),T2); }
+	
+extend nand_reg
+	sem = { AND(T1,D(a.i),D(b.i)); NOT(D(c.i),T1); }
+
+extend nand_const
+	sem = { SETI(T2,const); AND(T1,D(a.i),T2); NOT(D(c.i),T1); }
+	
+	
+	
+	
+	
+////////
+// or
+////////
+
+extend or_reg
+	sem = { OR(D(c.i),D(a.i),D(b.i)); }
+
+extend or_const9
+	sem = { SETI(T1, const.v); OR(D(c.i),D(a.i),T1); }
+	
+extend or_16_1
+	sem = { SET(T1,D(a.i)); OR(T2,T1,D(b.i)); SET(D(a.i),T2); }
+	
+extend or_16_2
+	sem = { SETI(T1, const.v); OR(D(15),D(15),T1); }
+	
+extend nor_reg
+	sem = { OR(T1,D(a.i),D(b.i)); NOT(D(c.i),T1); }
+
+extend nor_const
+	sem = { SETI(T2,const); OR(T1,D(a.i),T2); NOT(D(c.i),T1); }
+	
+extend orn_const 
+	sem = { SETI(T1, const.v); NOT(T2,T1); OR(D(c.i),D(a.i),T2); }
+
+extend orn_reg 
+	sem = { NOT(T1,D(b.i)); OR(D(c.i),D(a.i),T1);}
+	
+	
+	
+	
+	
+	
+///////////
+// xor
+///////////
+
+extend xor_reg
+	sem = {XOR(D(c.i),D(a.i),D(b.i));}
+
+extend xor_const9
+	sem = {SETI(T1, const.v); XOR(D(c.i),D(a.i),T1);}
+	
+extend xor16
+	sem = {SET(T1,D(a.i)); XOR(T2,T1,D(b.i)); SET(D(a.i),T2); }
+
+extend xnor_reg 
+	sem = {XOR(T1,D(a.i),D(b.i)); NOT(D(c.i),T1);}
+	
+extend xnor_const
+	sem = {SETI(T2,const); XOR(T1,D(a.i),T2); NOT(D(c.i),T1);}
+	
+	
+	
+	
+	
+////////////
+// madd
+////////////
+
+extend madd32_reg
+	sem = { SCRATCH(_PSW); MUL(T1, D(a.i), D(b.i)); ADD(D(c.i),D(d.i),T1); }
+	
+extend madd_u_reg
+	sem = { SCRATCH(_PSW); MULU(T1, D(a.i), D(b.i)); ADD(D(c.i),D(d.i),T1); }
+	
+extend madd32_const
+	sem = { SCRATCH(_PSW); SETI(T1,const.v); MUL(T2,D(a.i),T1); ADD(D(c.i),D(d.i),T2); }
+	
+extend madd_u_const
+	sem = { SCRATCH(_PSW); SETI(T1,const.v); MULU(T2,D(a.i),T1); ADD(D(c.i),D(d.i),T2); }
+
+extend maddh_1 , maddh_2 , maddh_3 , maddh_4 , maddsh_1 , maddsh_2 , maddsh_3 , maddsh_4 , maddq_2 , maddq_4 , maddq_6 , maddq_8 , maddq_10 , maddsq_2 , maddsq_4, maddsq_6, maddsq_8, maddsq_10 , maddsu64_reg , maddsu64_const, madd64_reg, madd64_const, madds64_reg, madds64_const , maddm_h_ll , maddm_h_lu , maddm_h_ul , maddm_h_uu , maddms_h_ll , maddms_h_uu , maddms_h_ul , maddms_h_lu, maddsuh_1 , maddsuh_2 , maddsuh_3 , maddsuh_4 , maddsush_1 , maddsush_2 , maddsush_3 , maddsush_4 , maddsumh_1 , maddsumh_2 , maddsumh_3 , maddsumh_4 , maddsumsh_1 , maddsumsh_2 , maddsumsh_3 , maddsumsh_4 
+	sem = { SCRATCH(_PSW); SCRATCH(D(c.i * 2)); SCRATCH(D(c.i * 2 + 1)); }
+	
+extend maddsq_1, maddsq_3, maddsq_5, maddsq_7, maddsq_9, maddq_1, maddq_3, maddq_5, maddq_7, maddq_9 , maddsu32_reg , maddsu32_const, madds32_reg, madds32_const, maddrh_1 , maddrh_2 , maddrh_3 , maddrh_4 , maddrh_5 , maddrsh_1 , maddrsh_2 , maddrsh_3 , maddrsh_4 , maddrsh_5, maddrq_1 , maddrq_2 , maddrsq_1 , maddrsq_2, maddsurh_1 , maddsurh_2 , maddsurh_3 , maddsurh_4 , maddsursh_1 , maddsursh_2 , maddsursh_3 , maddsursh_4 
+	sem = { SCRATCH(_PSW); SCRATCH(D(c.i)); }
+
+
+
+
+
+
+//////////////
+// not
+//////////////
+
+extend not16
+	sem = { SET(T1,D(a.i)); NOT(T2,T1); SET(D(a.i),T2); }
+
+
+
+
+
+/////////////
+// mul_q
+/////////////
+
+extend mul_q1
+	sem = { SCRATCH(_PSW); MUL(T1,D(a.i),D(b.i)); SETI(T2,n); SHL(T1,T1,T2); SHR(D(c.i),T1,32); }
+
+extend mul_q3,mul_q5,mul_q7,mul_q8
+	sem = { SCRATCH(_PSW); SCRATCH(D(c.i)); }
+	
+extend mul_q2, mul_q4, mul_q6
+	sem = {SCRATCH(_PSW); SCRATCH(D(c.i * 2)); SCRATCH(D(c.i * 2 + 1));}
+	
+	
+	
+	
+/////////////
+// nand
+/////////////
+
+extend nand_reg
+	sem = {AND(T1,D(a.i),D(b.i)); NOT(D(c.i),T1);}
+	
+extend nand_const
+	sem = {SETI(T2,const.v); AND(T1,D(a.i),T2); NOT(D(c.i),T1); }
+
+
+
+/////////////
+// ret
+/////////////
+
+//extend ret
+//	sem = { SET(PC,A(11)); LOAD_CONTEXT; }
+
+
+
+
+
+//////////
+// div
+//////////
+
+extend divs, divu
+	sem = { SCRATCH(_PSW); SCRATCH(D(c.i * 2)); SCRATCH(D(c.i * 2 + 1)); }
+
+
+
+
+
+/////////////
+// eq
+/////////////
+
+
+
+extend eq_w
+	sem = { SETI(D(c.i),0); CMP(T1,D(a.i),D(b.i)); IF(EQ,T1,1); SETI(D(c.i),0xFFFFFFFF); }
+
+extend eq_a
+	sem = { SETI(D(c.i),0); CMP(T1,A(a.i),A(b.i)); IF(EQ,T1,1); SETI(D(c.i),1); }
+
+extend eq_reg
+	sem = { SETI(D(c.i),0); CMP(T1,D(a.i),D(b.i)); IF(EQ,T1,1); SETI(D(c.i),1); }
+	
+extend eq_const9
+	sem = { SETI(D(c.i),0); SETI(T2,const.v); CMP(T1,D(a.i),T2); IF(EQ,T1,1); SETI(D(c.i),1); }
+	
+extend eq16_1
+	sem = { SETI(D(15),0); CMP(T1,D(a.i),D(b.i)); IF(EQ,T1,1); SETI(D(15),1); }
+	
+extend eq16_2
+	sem = { SETI(D(15),0); SETI(T2,const.v); CMP(T1,D(a.i),T2); IF(EQ,T1,1); SETI(D(15),1); }
+	
+	
+	
+	
+//////////
+// ge
+//////////
+	
+extend ge_reg
+	sem = { SETI(D(c.i),0); CMP(T1,D(a.i),D(b.i)); IF(GE,T1,1); SETI(D(c.i),1); }
+	
+extend ge_const9
+	sem = { SETI(D(c.i),0); SETI(T2,const.v); CMP(T1,D(a.i),T2); IF(GE,T1,1); SETI(D(c.i),1); }	
+	
+extend geu_reg
+	sem = { SETI(D(c.i),0); CMP(T1,D(a.i),D(b.i)); IF(UGE,T1,1); SETI(D(c.i),1); }
+	
+extend ge_u_const9
+	sem = { SETI(D(c.i),0); SETI(T2,const.v); CMP(T1,D(a.i),T2); IF(UGE,T1,1); SETI(D(c.i),1); }
+	
+extend gea
+	sem = { SETI(D(c.i),0); CMP(T1,A(a.i),A(b.i)); IF(GE,T1,1); SETI(D(c.i),1); }
+	
+
+
+
+/////////////////
+// lt
+/////////////////
+
+extend lt_reg
+	sem = { SETI(D(c.i),0); CMP(T1,D(a.i),D(b.i)); IF(LT,T1,1); SETI(D(c.i),1); }
+	
+extend lt_const
+	sem = { SETI(D(c.i),0); SETI(T2,const.v); CMP(T1,D(a.i),T2); IF(LT,T1,1); SETI(D(c.i),1); }	
+	
+extend ltu_reg
+	sem = { SETI(D(c.i),0); CMP(T1,D(a.i),D(b.i)); IF(ULT,T1,1); SETI(D(c.i),1); }
+	
+extend ltu_const
+	sem = { SETI(D(c.i),0); SETI(T2,const.v); CMP(T1,D(a.i),T2); IF(ULT,T1,1); SETI(D(c.i),1); }	
+	
+extend lt16_reg
+	sem = { SETI(D(15),0); CMP(T1,D(a.i),D(b.i)); IF(LT,T1,1); SETI(D(15),1); }
+	
+extend lt16_const
+	sem = { SETI(D(15),0); SETI(T2,const.v); CMP(T1,D(a.i),T2); IF(LT,T1,1); SETI(D(15),1); }	
+	
+	
+	
+	
+	
+	
+	
+	
+/////////////////////////////////////
+/////////////////////////////////////
+/////// JUMP INSTRUCTIONS ///////////
+/////////////////////////////////////
+/////////////////////////////////////
+
+
+//////////
+// jz
+//////////
+
+extend jz_a
+	sem = { SETI(T2,__IADDR); SETI(T1,0); CMP(T1, A(a.i), T1); IF(EQ, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2); }
+	
+extend jz_a_16
+	sem = { SETI(T2,__IADDR); SETI(T1,0); CMP(T1, A(b.i), T1); IF(EQ, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2); }
+
+extend jz_disp8_16
+	sem = {SETI(T2,__IADDR); SETI(T1,0); CMP(T1, D(15), T1); IF(EQ, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jz_disp4_16
+	sem = {SETI(T2,__IADDR); SETI(T1,0); CMP(T1, D(b.i), T1); IF(EQ, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+
+extend jz_t, jnz_t
+	sem = { SCRATCH(D(a.i)); }
+	
+extend jz_t_16, jnz_t_16
+	sem = { SCRATCH(D(15)); }
+	
+	
+	
+	
+/////////////
+//  j
+/////////////
+
+extend j
+	sem = { BRANCH(__IADDR +const*2); }
+	
+extend j16
+	sem = { BRANCH(__IADDR +const*2); }
+	
+extend ja
+	sem = { BRANCH(const); }
+	
+	
+
+
+//////////////
+// jeq
+//////////////
+
+extend jeq_reg_const
+	sem = { SETI(T2,__IADDR); SETI(T1,const); CMP(T1, D(a.i), T1); IF(EQ, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jeq_reg_reg
+	sem = { SETI(T2,__IADDR); CMP(T1, D(a.i), D(b.i)); IF(EQ, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+		
+extend jeq_a
+	sem = { SETI(T2,__IADDR); CMP(T1, A(a.i), A(b.i)); IF(EQ, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jeq16_const_1
+	sem = {SETI(T2,__IADDR); SETI(T1,const); CMP(T1, D(15), T1); IF(EQ, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jeq16_const_2
+	sem = {SETI(T2,__IADDR); SETI(T1,const); CMP(T1, D(15), T1); IF(EQ, T1, 1); SETI(T2, __IADDR + (disp+16) * 2); BRANCH(T2);}
+	
+extend jeq16_reg_1
+	sem = {SETI(T2,__IADDR); CMP(T1, D(15), D(b.i)); IF(EQ, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jeq16_reg_2
+	sem = {SETI(T2,__IADDR); CMP(T1, D(15), D(b.i)); IF(EQ, T1, 1); SETI(T2, __IADDR + (disp+16) * 2); BRANCH(T2);}
+	
+	
+	
+	
+///////////////
+// jge
+///////////////
+
+extend jge_reg
+	sem = { SETI(T2,__IADDR); CMP(T1, D(a.i), D(b.i)); IF(GE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jge_const4
+	sem = { SETI(T2,__IADDR); SETI(T1,const4); CMP(T1, D(a.i), T1); IF(GE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jge_u
+	sem = { SETI(T2,__IADDR); CMP(T1, D(a.i), D(b.i)); IF(UGE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jge_u_const4
+	sem = { SETI(T2,__IADDR); SETI(T1,const4); CMP(T1, D(a.i), T1); IF(UGE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jgez
+	sem = { SETI(T2,__IADDR); SETI(T1,0); CMP(T1, D(b.i), T1); IF(GE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jgtz
+	sem = { SETI(T2,__IADDR); SETI(T1,0); CMP(T1, D(b.i), T1); IF(GT, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend ji_16, ji
+	sem = { BRANCH(D(a.i)); }
+	
+	
+	
+	
+	
+//////////////
+// jl
+//////////////
+
+extend jl
+	sem = { SETI(A(11),__IADDR +4); BRANCH(__IADDR + disp*2); }
+	
+extend jla
+	sem = { SETI(A(11),__IADDR +4); BRANCH(const); }
+	
+extend jlez
+	sem = { SETI(T2,__IADDR); SETI(T1,0); CMP(T1, D(b.i), T1); IF(LE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jli
+	sem = { SETI(A(11),__IADDR +4); BRANCH(D(a.i)); }
+	
+	
+	
+	
+	
+//////////////
+// jlt
+//////////////
+
+extend jlt_reg
+	sem = { SETI(T2,__IADDR); CMP(T1, D(a.i), D(b.i)); IF(LT, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jlt_const4
+	sem = { SETI(T2,__IADDR); SETI(T1,const4); CMP(T1, D(a.i), T1); IF(LT, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jlt_u
+	sem = { SETI(T2,__IADDR); CMP(T1, D(a.i), D(b.i)); IF(ULT, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jlt_u_const4
+	sem = { SETI(T2,__IADDR); SETI(T1,const4); CMP(T1, D(a.i), T1); IF(ULT, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jltz
+	sem = { SETI(T2,__IADDR); SETI(T1,0); CMP(T1, D(b.i), T1); IF(LT, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+	
+	
+	
+	
+/////////////
+// jne
+/////////////
+
+extend jne_const4
+	sem = { SETI(T2,__IADDR); SETI(T1,const4); CMP(T1, D(a.i), T1); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jne_reg
+	sem = { SETI(T2,__IADDR); CMP(T1, D(a.i), D(b.i)); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jne16_const_1
+	sem = {SETI(T2,__IADDR); SETI(T1,const4); CMP(T1, D(15), T1); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jne16_const_2
+	sem = {SETI(T2,__IADDR); SETI(T1,const4); CMP(T1, D(15), T1); IF(NE, T1, 1); SETI(T2, __IADDR + (disp+16) * 2); BRANCH(T2);}
+	
+extend jne16_reg_1
+	sem = {SETI(T2,__IADDR); CMP(T1, D(15), D(b.i)); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jne16_reg_2
+	sem = {SETI(T2,__IADDR); CMP(T1, D(15), D(b.i)); IF(NE, T1, 1); SETI(T2, __IADDR + (disp+16) * 2); BRANCH(T2);}
+	
+extend jne_a
+	sem = { SETI(T2,__IADDR); CMP(T1, A(a.i), A(b.i)); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jned_const4
+	sem = { SETI(T2,__IADDR); SETI(T1,const4); CMP(T1, D(a.i), T1); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2); SUB(D(a.i),D(a.i),1); }
+	
+extend jned_reg
+	sem = { SETI(T2,__IADDR); CMP(T1, D(a.i), D(b.i)); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2); SUB(D(a.i),D(a.i),1);}
+	
+extend jnei_const4
+	sem = { SETI(T2,__IADDR); SETI(T1,const4); CMP(T1, D(a.i), T1); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2); ADD(D(a.i),D(a.i),1); }
+	
+extend jnei_reg
+	sem = { SETI(T2,__IADDR); CMP(T1, D(a.i), D(b.i)); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2); ADD(D(a.i),D(a.i),1);}
+	
+extend jnz_16_1
+	sem = { SETI(T2,__IADDR); SETI(T1,0); CMP(T1, D(15), T1); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jnz_16_2
+	sem = { SETI(T2,__IADDR); SETI(T1,0); CMP(T1, D(b.i), T1); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jnz_a_16
+	sem = { SETI(T2,__IADDR); SETI(T1,0); CMP(T1, A(b.i), T1); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+extend jnz_a
+	sem = { SETI(T2,__IADDR); SETI(T1,0); CMP(T1, A(a.i), T1); IF(NE, T1, 1); SETI(T2, __IADDR + disp * 2); BRANCH(T2);}
+	
+	
+	
+	
+	
+	
+///////////
+// cadd
+///////////
+
+extend cadd_reg
+	sem = { SCRATCH(_PSW); SETI(T1,0); SET(D(c.i),D(a.i)); CMP(T2,D(d.i),T1); IF(NE,T2,1); ADD(D(c.i),D(a.i),D(b.i)); }
+	
+extend cadd_const9
+	sem = { SCRATCH(_PSW); SETI(T1,const); SETI(T2,0); SET(D(c.i),D(a.i)); CMP(T2,D(d.i),T2); IF(NE,T2,1); ADD(D(c.i),D(a.i),T1); }
+	
+extend cadd16
+	sem = { SCRATCH(_PSW); SETI(T1,const); SETI(T2,0); CMP(T2,D(15),T2); IF(NE,T2,1); ADD(D(a.i),D(a.i),T1); }
+	
+extend caddn_reg
+	sem = { SCRATCH(_PSW); SETI(T1,0); SET(D(c.i),D(a.i)); CMP(T2,D(d.i),T1); IF(EQ,T2,1); ADD(D(c.i),D(a.i),D(b.i)); }
+	
+extend caddn_const9
+	sem = { SCRATCH(_PSW); SETI(T1,const); SETI(T2,0); SET(D(c.i),D(a.i)); CMP(T2,D(d.i),T2); IF(EQ,T2,1); ADD(D(c.i),D(a.i),T1); }
+	
+extend cadd16_n
+	sem = { SCRATCH(_PSW); SETI(T1,const4); SETI(T2,0); CMP(T2,D(15),T2); IF(EQ,T2,1); ADD(D(a.i),D(a.i),T1); }
+	
+
+
+
+
+
+
+//////////////
+// swap
+//////////////
+
+extend
+	swap_br,
+	swap_ca
+		sem = { SCRATCH(A(b.i * 2)); SCRATCH(A(b.i * 2 + 1)); }
+
+extend swap_abs
+	sem = { SETI(T1,const); LOADW(T2,T1); SET(T3,D(a.i)); STOREW(T3,T1); SET(D(a.i),T2); }
+	
+extend swap_bo10
+	sem = { SETI(T1,const); ADD(T1, A(b.i), T1); LOADW(T2,T1); SET(T3,D(a.i)); STOREW(T3,T1); SET(D(a.i),T2); }
+	
+extend swap_pre
+	sem = { SETI(T1,off10); ADD(T1,T1,A(b.i)); LOADW(T2,T1); SET(T3,D(a.i)); STOREW(T3,T1); SET(D(a.i),T2); SET(A(b.i),T1); }
+	
+extend swap_post
+	sem = { SET(T1,A(b.i)); LOADW(T2,T1); SET(T3,D(a.i)); STOREW(T3,T1); SET(D(a.i),T2); SETI(T3,off10); ADD(A(b.i),T1,T3); }
+	
+	
+	
+	
+	
+	
+	
+	
+//////////////
+// loop 
+//////////////
+
+extend loop
+	sem = { SETI(T1,0); CMP(T2,T1,A(b.i)); IF(NE,T2,1); BRANCH(__IADDR + const*2); SUB(A(b.i),A(b.i),1); }
+	
+extend loop_16
+	sem = { SETI(T1,0); CMP(T2,T1,A(b.i)); IF(NE,T2,1); BRANCH(__IADDR + disp); SUB(A(b.i),A(b.i),1); }
+	
+extend loopu
+	sem = { BRANCH(__IADDR + const*2); }
+	
+	
+	
+	
+	
+	
+	
+	
+///////////////
+// call
+///////////////
+
+extend call
+	sem = { SETI(T2,__IADDR +4); SET(T1,FCX); LOADW(T3,T1); SAVE_UPPER_CONTEXT; SET(FCX,T3); BRANCH(__IADDR+ const*2); SET(A(11),T2);}
+	
+extend call16
+	sem = { SETI(T2,__IADDR +2); SET(T1,FCX); LOADW(T3,T1); SAVE_UPPER_CONTEXT; SET(FCX,T3); BRANCH(__IADDR+ const*2); SET(A(11),T2); }
+	
+extend calla
+	sem = { SETI(T2,__IADDR +4); SET(T1,FCX); LOADW(T3,T1); SAVE_UPPER_CONTEXT; SET(FCX,T3); BRANCH(const); SET(A(11),T2); }
+	
+extend calli
+	sem = { SETI(T2,__IADDR +4); SET(T1,FCX); LOADW(T3,T1); SAVE_UPPER_CONTEXT; SET(FCX,T3); BRANCH(A(a.i)); SET(A(11),T2); }
+	
+extend fcall
+	sem = { SETI(T1,__IADDR+4); SUB(T2,A(10),4); STOREW(T2,A(11)); BRANCH(__IADDR + const*2); SET(A(11),T1); SET(A(10),T2); }
+	
+extend fcalla
+	sem = { SETI(T1,__IADDR+4); SUB(T2,A(10),4); STOREW(T2,A(11)); BRANCH(const); SET(A(11),T1); SET(A(10),T2); }
+	
+extend fcalli
+	sem = { SETI(T1,__IADDR+4); SUB(T2,A(10),4); STOREW(T2,A(11)); BRANCH(A(a.i)); SET(A(11),T1); SET(A(10),T2); }
+	
+extend fret, fret16
+	sem = { BRANCH(A(11)); SET(T1,A(10)); LOADW(A(11),T1); ADD(A(10),A(10),4); }
+	
+extend ret, ret_16, rfe, rfe16
+	sem = { SCRATCH(_PSW); BRANCH(A(11)); SET(T1,FCX); LOAD_UPPER_CONTEXT; STOREW(FCX,T1); }
+	
+	
+
+
+
+
+
+
+
+
+
+//////////////////
+// special
+//////////////////
+
+extend bisr, bisr16
+	sem = { SET(T1,FCX); LOADW(T1,T3); SAVE_LOWER_CONTEXT; SET(FCX,T3);}
+	
+extend ldlcx_abs
+	sem = { SETI(T1,off18); LOAD_LOWER_CONTEXT; }
+	
+extend ldlcx_ind
+	sem = { SETI(T2,off10); ADD(T1,T2,A(b.i)); LOAD_LOWER_CONTEXT; }
+	
+extend lducx_abs
+	sem = { SETI(T1,off18); LOAD_UPPER_CONTEXT; }
+	
+extend lducx_ind
+	sem = { SETI(T2,off10); ADD(T1,T2,A(b.i)); LOAD_UPPER_CONTEXT; }
+	
+extend lea_18
+	sem = { SETI(A(a.i),off); }
+	
+extend lea_10
+	sem = { SETI(T1,off); ADD(A(a.i),A(b.i),T1); }
+	
+extend lea_16
+	sem = { SETI(T1,off); ADD(A(a.i),A(b.i),T1); }
+	
+extend rfm
+	sem = { SCRATCH(_PSW); }
+	
+extend rslcx
+	sem = { SET(T1,FCX); LOAD_LOWER_CONTEXT; STOREW(T1,FCX); }
+	
+extend stlcx_abs
+	sem = { SETI(T1,off18); SAVE_LOWER_CONTEXT; }
+	
+extend stlcx_ind
+	sem = { SETI(T2,off10); ADD(T1,T2,A(b.i)); SAVE_LOWER_CONTEXT; }
+	
+extend stucx_abs
+	sem = { SETI(T1,off18); SAVE_UPPER_CONTEXT; }
+	
+extend stucx_ind
+	sem = { SETI(T2,off10); ADD(T1,T2,A(b.i)); SAVE_UPPER_CONTEXT; }
+	
+extend svlcx
+	sem = { SET(T1,FCX); LOADW(T1,FCX); SAVE_LOWER_CONTEXT; }
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////
+///////////////////////////////////////
+/////// LOAD-STORE INSTRUCTIONS ///////
+///////////////////////////////////////
+///////////////////////////////////////
+
+
+
+////////////
+// ld.a
+////////////
+
+extend ld_a_abs
+	sem = { SETI(T1,off); LOADW(T2,T1); SET(A(a.i),T2);} 
+	
+extend ld_a_bo10, ld_a_bo16
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); LOADW(T2,T1); SET(A(a.i),T2); }
+	
+extend ld_a_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); LOADW(T2,A(b.i)); SET(A(a.i),T2); }
+	
+extend ld_a_post
+	sem = { LOADW(T2,A(b.i)); SET(A(a.i),T2); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+extend ld_a_16_1
+	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(b.i)); LOADW(A(15),T1); }
+	
+extend ld_a_16_2
+	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(15)); LOADW(A(c.i),T1); }
+	
+extend ld_a_16_3
+	sem = { LOADW(A(c.i),A(b.i)); ADD(A(b.i),A(b.i),4); }
+	
+extend ld_a_16_4
+	sem = { LOADW(A(c.i),A(b.i)); }
+	
+extend ld_a_16_5
+	sem = { SETI(T1,const); MUL(T1,T1,4); ADD(T1,T1,A(10)); LOADW(A(15),T1); }
+	
+
+
+
+////////////
+// ld.b
+////////////
+
+extend ld_b_abs
+	sem = { SETI(T1,off); LOADSB(T2,T1); SET(D(a.i),T2);} 
+	
+extend ld_b_bo10, ld_b_bo16
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); LOADSB(T2,T1); SET(D(a.i),T2); }
+	
+extend ld_b_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); LOADSB(T2,A(b.i)); SET(D(a.i),T2); }
+	
+extend ld_b_post
+	sem = { LOADSB(T2,A(b.i)); SET(D(a.i),T2); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+extend ld_bu_abs
+	sem = { SETI(T1,off); LOADUB(T2,T1); SET(D(a.i),T2);} 
+	
+extend ld_bu_bo10, ld_bu_bo16
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); LOADUB(T2,T1); SET(D(a.i),T2); }
+	
+extend ld_bu_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); LOADUB(T2,A(b.i)); SET(D(a.i),T2); }
+	
+extend ld_bu_post
+	sem = { LOADUB(T2,A(b.i)); SET(D(a.i),T2); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+extend ld_bu_16_2
+	sem = { LOADUB(D(c.i),A(b.i)); ADD(A(b.i),A(b.i),1); }
+	
+extend ld_bu_16_1
+	sem = { LOADUB(D(c.i),A(b.i)); }
+	
+extend ld_bu_16_3
+	sem = { SETI(T1,off4); ADD(T1,T1,A(15)); LOADUB(T2,T1); SET(D(c.i),T2); }
+	
+extend ld_bu_16_4
+	sem = { SETI(T1,off4); ADD(T1,T1,A(b.i)); LOADUB(D(15),T1); }
+	
+	
+	
+
+////////////
+// ld.d
+////////////
+
+extend ld_d_rev, ld_d_circ, ld_d_abs, ld_d_bo10, ld_d_pre, ld_d_post
+	sem = { SCRATCH(D(a.i * 2)); SCRATCH(D(a.i * 2 + 1)); }
+	
+extend ld_da_rev, ld_da_circ, ld_da_abs, ld_da_bo10, ld_da_pre, ld_da_post
+	sem = { SCRATCH(A(a.i * 2)); SCRATCH(A(a.i * 2 + 1)); }	
+	
+	
+	
+	
+////////////
+// ld.h
+////////////
+
+extend ld_h_abs
+	sem = { SETI(T1,off); LOADSH(T2,T1); SET(D(a.i),T2);} 
+	
+extend ld_h_bo10, ld_h_bo16
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); LOADSH(T2,T1); SET(D(a.i),T2); }
+	
+extend ld_h_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); LOADSH(T2,A(b.i)); SET(D(a.i),T2); }
+	
+extend ld_h_post
+	sem = { LOADSH(T2,A(b.i)); SET(D(a.i),T2); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+extend ld_h_16_2
+	sem = { LOADSH(D(c.i),A(b.i)); ADD(A(b.i),A(b.i),2); }
+	
+extend ld_h_16_4
+	sem = { LOADSH(D(c.i),A(b.i)); }
+	
+extend ld_h_16_3
+	sem = { SETI(T1,off4); MUL(T1,T1,2); ADD(T1,T1,A(15)); LOADSH(T2,T1); SET(D(c.i),T2); }
+	
+extend ld_h_16_1
+	sem = { SETI(T1,off4); MUL(T1,T1,2); ADD(T1,T1,A(b.i)); LOADSH(D(15),T1); }
+	
+extend ld_hu_abs
+	sem = { SETI(T1,off); LOADUH(T2,T1); SET(D(a.i),T2); } 
+	
+extend ld_hu_bo10, ld_hu_bo16
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); LOADUH(T2,T1); SET(D(a.i),T2); }
+	
+extend ld_hu_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); LOADUH(T2,A(b.i)); SET(D(a.i),T2); }
+	
+extend ld_hu_post
+	sem = { LOADUH(T2,A(b.i)); SET(D(a.i),T2); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+
+
+
+////////////
+// ld.q
+////////////
+
+extend ld_q_abs , ld_q_bo10 , ld_q_rev , ld_q_circ , ld_q_post , ld_q_pre 
+	sem = { SCRATCH(D(a.i)); }
+	
+	
+	
+	
+////////////
+// ld.w
+////////////
+
+extend ld_w_abs
+	sem = { SETI(T1,off); LOADW(T2,T1); SET(D(a.i),T2);} 
+	
+extend ld_w_bo10, ld_w_bo16
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); LOADW(T2,T1); SET(D(a.i),T2); }
+	
+extend ld_w_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); LOADW(T2,A(b.i)); SET(D(a.i),T2); }
+	
+extend ld_w_post
+	sem = { LOADW(T2,A(b.i)); SET(D(a.i),T2); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+extend ld_w_16_5
+	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(b.i)); LOADW(D(15),T1); }
+	
+extend ld_w_16_4
+	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(15)); LOADW(D(c.i),T1); }
+	
+extend ld_w_16_3
+	sem = { LOADW(D(c.i),A(b.i)); ADD(A(b.i),A(b.i),4); }
+	
+extend ld_w_16_2
+	sem = { LOADW(D(c.i),A(b.i)); }
+	
+extend ld_w_16_1
+	sem = { SETI(T1,const); MUL(T1,T1,4); ADD(T1,T1,A(10)); LOADW(D(15),T1); }
+
+
+
+
+
+/////////////
+// st.a
+/////////////
+
+extend st_a_abs
+	sem = { SETI(T1,off); SET(T2,A(a.i)); STOREW(T2,T1); } 
+	
+extend st_a_bo10
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); SET(T2,A(a.i)); STOREW(T2,T1); }
+	
+extend st_a_bol
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); SET(T2,A(a.i)); STOREW(T2,T1); }
+	
+extend st_a_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); SET(T2,A(a.i)); STOREW(T2,A(b.i)); }
+	
+extend st_a_post
+	sem = { SET(T2,A(a.i)); STOREW(T2,A(b.i)); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+extend st_a_16_2
+	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(b.i)); STOREW(A(15),T1); }
+	
+extend st_a_16_1
+	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(15)); SET(T2,A(a.i)); STOREW(T2,T1); }
+	
+extend st_a_16_4
+	sem = { SET(T2,A(a.i)); STOREW(T2,A(b.i)); ADD(A(b.i),A(b.i),4); }
+	
+extend st_a_16_3
+	sem = { SET(T2,A(a.i)); STOREW(T2,A(b.i)); }
+	
+extend st_a_16_5
+	sem = { SETI(T1,const); MUL(T1,T1,4); ADD(T1,T1,A(10)); STOREW(A(15),T1); }
+	
+	
+	
+	
+/////////////
+// st.b
+/////////////
+
+extend st_b_abs
+	sem = { SETI(T1,off); SET(T2,D(a.i)); STOREB(T2,T1); } 
+	
+extend st_b_bo10, st_b_bo16
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); SET(T2,D(a.i)); STOREB(T2,T1); }
+	
+extend st_b_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); SET(T2,D(a.i)); STOREB(T2,A(b.i)); }
+	
+extend st_b_post
+	sem = { SET(T2,D(a.i)); STOREB(T2,A(b.i)); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+extend st_b_16_2
+	sem = { SET(T1,D(a.i)); STOREB(T1,A(b.i)); ADD(A(b.i),A(b.i),1); }
+	
+extend st_b_16_1
+	sem = { SET(T1,D(a.i)); STOREB(T1,A(b.i)); }
+	
+extend st_b_16_3
+	sem = { SETI(T1,off4); ADD(T1,T1,A(15)); STOREB(T2,T1); SET(D(a.i),T2); }
+	
+extend st_b_16_4
+	sem = { SETI(T1,off4); ADD(T1,T1,A(b.i)); STOREB(D(15),T1); }
+	
+	
+	
+	
+/////////////
+// st.da
+/////////////
+
+extend st_da_abs
+	sem = { SETI(T1,off); SET(T2,A(a.i)); STOREW(T2,T1); SET(T2,A(a.i+1)); STOREW(T2,T1+4); } 
+	
+extend st_da_bo10
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); SET(T2,A(a.i)); STOREW(T2,T1); SET(T2,A(a.i+1)); STOREW(T2,T1+4); }
+	
+extend st_da_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); SET(T2,A(a.i)); STOREW(T2,A(b.i)); SET(T2,A(a.i+1)); STOREW(T2,A(b.i)+4); }
+	
+extend st_da_post
+	sem = { SET(T2,A(a.i)); STOREW(T2,A(b.i)); SET(T2,A(a.i+1)); STOREW(T2,A(b.i)+4); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+
+
+
+
+////////////
+// st.d
+////////////
+
+extend st_d_abs
+	sem = { SETI(T1,off); SET(T2,D(a.i)); STOREW(T2,T1); SET(T2,D(a.i+1)); STOREW(T2,T1+4); } 
+	
+extend st_d_bo10
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); SET(T2,D(a.i)); STOREW(T2,T1); SET(T2,D(a.i+1)); STOREW(T2,T1+4); }
+	
+extend st_d_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); SET(T2,D(a.i)); STOREW(T2,A(b.i)); SET(T2,D(a.i+1)); STOREW(T2,A(b.i)+4); }
+	
+extend st_d_post
+	sem = { SET(T2,D(a.i)); STOREW(T2,A(b.i)); SET(T2,D(a.i+1)); STOREW(T2,A(b.i)+4); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+	
+	
+	
+	
+/////////////
+// st.h
+/////////////
+
+extend st_h_abs
+	sem = { SETI(T1,off); SET(D(a.i),T2); STOREH(T2,T1); } 
+	
+extend st_h_bo10, st_h_bo16
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); SET(D(a.i),T2); STOREH(T2,T1); }
+	
+extend st_h_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); SET(D(a.i),T2); STOREH(T2,A(b.i)); }
+	
+extend st_h_post
+	sem = { SET(D(a.i),T2); STOREH(T2,A(b.i)); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+extend st_h_16_1
+	sem = { SET(D(a.i),T2); STOREH(T2,A(b.i)); ADD(A(b.i),A(b.i),2); }
+	
+extend st_h_16_4
+	sem = { SET(D(a.i),T2); STOREH(T2,A(b.i)); }
+	
+extend st_h_16_3
+	sem = { SETI(T1,off4); MUL(T1,T1,2); ADD(T1,T1,A(15)); SET(D(a.i),T2); STOREH(T2,T1); }
+	
+extend st_h_16_2
+	sem = { SETI(T1,off4); MUL(T1,T1,2); ADD(T1,T1,A(b.i)); STOREH(D(15),T1); }
+	
+	
+	
+	
+	
+///////////
+// st.t
+///////////
+
+extend st_t
+	sem = { SETI(T1,off18); LOADSB(T2,T1); SHL(T3,1,bpos3); NOT(T3,T3); AND(T2,T2,T3); SHL(T3,b,bpos3); OR(T2,T2,T3); STOREB(T2,T1); }
+	
+	
+	
+	
+	
+///////////
+// st.w
+///////////
+
+extend st_w_abs
+	sem = { SETI(T1,off); SET(D(a.i),T2); STOREW(T2,T1); } 
+	
+extend st_w_bo10, ld_w_bo16
+	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); SET(D(a.i),T2); STOREW(T2,T1); }
+	
+extend st_w_pre
+	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); SET(D(a.i),T2); STOREW(T2,A(b.i)); }
+	
+extend st_w_post
+	sem = { SET(D(a.i),T2); STOREW(T2,A(b.i)); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	
+extend st_w_16_5
+	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(b.i)); STOREW(D(15),T1); }
+	
+extend st_w_16_4
+	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(15)); SET(T2,D(a.i)); STOREW(T2,T1); }
+	
+extend st_w_16_3
+	sem = { SET(T2,D(a.i)); STOREW(T2,A(b.i)); ADD(A(b.i),A(b.i),4); }
+	
+extend st_w_16_2
+	sem = { SET(T2,D(a.i)); STOREW(T2,A(b.i)); }
+	
+extend st_w_16_1
+	sem = { SETI(T1,const); MUL(T1,T1,4); ADD(T1,T1,A(10)); STOREW(D(15),T1); }
+
+
+
+
+
+////////////
+// ldmst
+////////////
+
+extend ldmst_abs
+	sem = { SETI(T1,off); LOADW(T2,T1); NOT(T3,D(a.i*2+1)); AND(T2,T2,T3); AND(T3,D(a.i*2),D(a.i*2+1)); OR(T2,T2,T3); STOREW(T2,T1); }
+	
+extend ldmst_bo10
+	sem = { SETI(T1,off); ADD(T1,T1,A(b.i)); LOADW(T2,T1); NOT(T3,D(a.i*2+1)); AND(T2,T2,T3); AND(T3,D(a.i*2),D(a.i*2+1)); OR(T2,T2,T3); STOREW(T2,T1); }
+	
+extend ldmst_pre
+	sem = { SETI(T1,off); ADD(T1,T1,A(b.i)); LOADW(T2,T1); NOT(T3,D(a.i*2+1)); AND(T2,T2,T3); AND(T3,D(a.i*2),D(a.i*2+1)); OR(T2,T2,T3); STOREW(T2,T1); SET(A(b.i),T1); }
+
+extend ldmst_post
+	sem = { SET(T1,A(b.i)); LOADW(T2,T1); NOT(T3,D(a.i*2+1)); AND(T2,T2,T3); AND(T3,D(a.i*2),D(a.i*2+1)); OR(T2,T2,T3); STOREW(T2,T1); ADD(A(b.i),T1,off); }
+	

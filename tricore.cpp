@@ -19,9 +19,10 @@
  *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <otawa/prog/File.h>
 #include <otawa/prog/Loader.h>
 #include <otawa/prog/sem.h>
-#include <otawa/program.h>
+#include <otawa/prog/Segment.h>
 #include <otawa/hard.h>
 #include <otawa/loader/gliss.h>
 #include <gel/gel.h>
@@ -691,8 +692,11 @@ otawa::Inst *Segment::decode(address_t address) {
 // loader definition
 class Loader: public otawa::Loader {
 public:
-	Loader(void): otawa::Loader("tricore", Version(2, 0, 0), OTAWA_LOADER_VERSION) {
-	}
+	Loader(void): otawa::Loader(make("tricore", OTAWA_LOADER_VERSION)
+		.version("2.0.0")
+		.description("loader for TriCore architecture")
+		.license(Manager::copyright)
+		.alias("elf_44")) { }
 
 	virtual otawa::Process *load(Manager *man, CString path, const PropList& props) {
 		otawa::Process *proc = create(man, props);

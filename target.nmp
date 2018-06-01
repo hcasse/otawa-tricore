@@ -25,7 +25,7 @@ extend j16
 	otawa_target = __IADDR + coerce(int(32),const)*2
 
 extend jeq_reg_reg , jeq_reg_const , jeq_a , jge_const4 , jge_reg , jge_u , jge_u_const4 , jlt_reg , jlt_const4 , jlt_u , jlt_u_const4 , jne_const4 , jne_reg , jne_a , jned_const4 , jned_reg , jnei_reg , jnei_const4 ,  jnz_a , jnz_t , jz_a , jz_t
-	otawa_target = __IADDR + coerce(int(32),disp<15..0>)*2
+	otawa_target = __IADDR + coerce(int(32),disp)*2
 
 extend jnz_16_1
 	otawa_target = __IADDR + coerce(int(32),disp)*2

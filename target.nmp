@@ -36,10 +36,10 @@ extend jz_disp8_16
 extend jl
 	otawa_target = __IADDR + coerce(int(32),disp)*2
 
-extend jeq16_const_1 , jeq16_reg_1 , jeq16_reg_2 , jgtz , jgez , jlez , jltz , jne16_const_1 , jne16_reg_1 , jnz_16_2 , jnz_a_16 , jnz_t_16 , jz_disp4_16 , jz_t_16 , jz_a_16
+extend jeq16_const_1 , jeq16_const_2 , jeq16_reg_1 , jeq16_reg_2 , jgtz , jgez , jlez , jltz , jne16_const_1 , jne16_reg_1 , jnz_16_2 , jnz_a_16 , jnz_t_16 , jz_disp4_16 , jz_t_16 , jz_a_16
 	otawa_target = __IADDR + coerce(card(32),disp)*2
 	
-extend jne16_const_2 , jne16_reg_2, jeq16_const_2
+extend jne16_const_2 , jne16_reg_2
 	otawa_target = __IADDR + coerce(card(32),disp+16)*2
 	
 

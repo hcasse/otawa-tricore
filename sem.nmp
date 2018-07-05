@@ -633,7 +633,7 @@ extend nand_const
 //////////
 
 extend divs, divu
-	sem = { SCRATCH(_PSW); SCRATCH(D(c.i * 2)); SCRATCH(D(c.i * 2 + 1)); }
+	sem = { SCRATCH(_PSW); SCRATCH(D(c.h)); SCRATCH(D(c.l)); }
 
 
 
@@ -693,22 +693,22 @@ extend gea
 /////////////////
 
 extend lt_reg
-	sem = { SETI(D(c.i),0); CMP(T1,D(a.i),D(b.i)); IF(LT,T1,1); SETI(D(c.i),1); }
+	sem = { SET(T1, D(a.i)); SETI(T2, D(b.i)); CMP(T1, T1, T2); IF(LT, T1, 2); SETI(D(c.i),1); CONT(); SETI(D(c.i),0); }
 	
 extend lt_const
-	sem = { SET(T1, D(a.i)); SETI(T2,const.v); CMP(T1,T1,T2); SCRATCH(D(c.i)); IF(LT,T1,2); SETI(D(c.i),1); CONT(); SETI(D(c.i),0); }	
+	sem = { SET(T1, D(a.i)); SETI(T2, const.v); CMP(T1, T1, T2); IF(LT, T1, 2); SETI(D(c.i),1); CONT(); SETI(D(c.i),0); }	
 	
 extend ltu_reg
-	sem = { SETI(D(c.i),0); CMP(T1,D(a.i),D(b.i)); IF(ULT,T1,1); SETI(D(c.i),1); }
+	sem = { SET(T1, D(a.i)); SETI(T2, D(b.i)); CMP(T1, T1, T2); IF(ULT, T1, 2); SETI(D(c.i),1); CONT(); SETI(D(c.i),0); }
 	
 extend ltu_const
-	sem = { SETI(D(c.i),0); SETI(T2,const.v); CMP(T1,D(a.i),T2); IF(ULT,T1,1); SETI(D(c.i),1); }	
+	sem = { SET(T1, D(a.i)); SETI(T2, const.v); CMP(T1, T1, T2); IF(ULT, T1, 2); SETI(D(c.i),1); CONT(); SETI(D(c.i),0); }	
 	
 extend lt16_reg
-	sem = { SETI(D(15),0); CMP(T1,D(a.i),D(b.i)); IF(LT,T1,1); SETI(D(15),1); }
+	sem = { SET(T1, D(a.i)); SETI(T2, D(b.i)); CMP(T1, T1, T2); IF(LT, T1, 2); SETI(D(15),1); CONT(); SETI(D(15),0); }
 	
 extend lt16_const
-	sem = { SETI(D(15),0); SETI(T2,const.v); CMP(T1,D(a.i),T2); IF(LT,T1,1); SETI(D(15),1); }	
+	sem = { SET(T1, D(a.i)); SETI(T2, const.v); CMP(T1, T1, T2); IF(LT, T1, 2); SETI(D(15),1); CONT(); SETI(D(15),0); }	
 	
 	
 	
@@ -1119,10 +1119,10 @@ extend ld_a_post
 	sem = { LOADW(T2,A(b.i)); SET(A(a.i),T2); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
 	
 extend ld_a_16_1
-	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(b.i)); LOADW(A(15),T1); }
+	sem = { SETI(T1,off4); SETI(T2, 4); MUL(T1,T1,T2); ADD(T1,T1,A(b.i)); LOADW(A(15),T1); }
 	
 extend ld_a_16_2
-	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(15)); LOADW(A(c.i),T1); }
+	sem = { SETI(T1,off4); SETI(T2, 4); MUL(T1,T1,T2); ADD(T1,T1,A(15)); LOADW(A(c.i),T1); }
 	
 extend ld_a_16_3
 	sem = { LOADW(A(c.i),A(b.i)); ADD(A(b.i),A(b.i),4); }
@@ -1131,7 +1131,7 @@ extend ld_a_16_4
 	sem = { LOADW(A(c.i),A(b.i)); }
 	
 extend ld_a_16_5
-	sem = { SETI(T1,const); MUL(T1,T1,4); ADD(T1,T1,A(10)); LOADW(A(15),T1); }
+	sem = { SETI(T1,const); SETI(T2, 4); MUL(T1,T1,T2); ADD(T1,T1,A(10)); LOADW(A(15),T1); }
 	
 
 
@@ -1217,10 +1217,10 @@ extend ld_h_16_4
 	sem = { LOADSH(D(c.i),A(b.i)); }
 	
 extend ld_h_16_3
-	sem = { SETI(T1,off4); MUL(T1,T1,2); ADD(T1,T1,A(15)); LOADSH(T2,T1); SET(D(c.i),T2); }
+	sem = { SETI(T1,off4); SETI(T2, 2); MUL(T1, T1, T2); ADD(T1,T1,A(15)); LOADSH(T2,T1); SET(D(c.i),T2); }
 	
 extend ld_h_16_1
-	sem = { SETI(T1,off4); MUL(T1,T1,2); ADD(T1,T1,A(b.i)); LOADSH(D(15),T1); }
+	sem = { SETI(T1,off4); SETI(T2, 2); MUL(T1, T1, T2); ADD(T1,T1,A(b.i)); LOADSH(D(15),T1); }
 	
 extend ld_hu_abs
 	sem = { SETI(T1,off); LOADUH(T2,T1); SET(D(a.i),T2); } 
@@ -1264,10 +1264,10 @@ extend ld_w_post
 	sem = { LOADW(T2,A(b.i)); SET(D(a.i),T2); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
 	
 extend ld_w_16_5
-	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(b.i)); LOADW(D(15),T1); }
+	sem = { SETI(T1,off4); SETI(T2, 4); MUL(T1, T1, T2); ADD(T1,T1,A(b.i)); LOADW(D(15),T1); }
 	
 extend ld_w_16_4
-	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(15)); LOADW(D(c.i),T1); }
+	sem = { SETI(T1,off4); SETI(T2, 4); MUL(T1, T1, T2); ADD(T1,T1,A(15)); LOADW(D(c.i),T1); }
 	
 extend ld_w_16_3
 	sem = { LOADW(D(c.i),A(b.i)); ADD(A(b.i),A(b.i),4); }
@@ -1276,7 +1276,7 @@ extend ld_w_16_2
 	sem = { LOADW(D(c.i),A(b.i)); }
 	
 extend ld_w_16_1
-	sem = { SETI(T1,const); MUL(T1,T1,4); ADD(T1,T1,A(10)); LOADW(D(15),T1); }
+	sem = { SETI(T1,const); SETI(T2, 4); MUL(T1,T1, T2); ADD(T1,T1,A(10)); LOADW(D(15),T1); }
 
 
 
@@ -1302,10 +1302,10 @@ extend st_a_post
 	sem = { SET(T2,A(a.i)); STOREW(T2,A(b.i)); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
 	
 extend st_a_16_2
-	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(b.i)); STOREW(A(15),T1); }
+	sem = { SETI(T1,off4); SETI(T2, 4); MUL(T1,T1,T2); ADD(T1,T1,A(b.i)); STOREW(A(15),T1); }
 	
 extend st_a_16_1
-	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(15)); SET(T2,A(a.i)); STOREW(T2,T1); }
+	sem = { SETI(T1,off4); SETI(T2, 4); MUL(T1,T1,T2); ADD(T1,T1,A(15)); SET(T2,A(a.i)); STOREW(T2,T1); }
 	
 extend st_a_16_4
 	sem = { SET(T2,A(a.i)); STOREW(T2,A(b.i)); ADD(A(b.i),A(b.i),4); }
@@ -1314,7 +1314,7 @@ extend st_a_16_3
 	sem = { SET(T2,A(a.i)); STOREW(T2,A(b.i)); }
 	
 extend st_a_16_5
-	sem = { SETI(T1,const); MUL(T1,T1,4); ADD(T1,T1,A(10)); STOREW(A(15),T1); }
+	sem = { SETI(T1,const); SETI(T2, 4); MUL(T1,T1,T2); ADD(T1,T1,A(10)); STOREW(A(15),T1); }
 	
 	
 	
@@ -1342,7 +1342,7 @@ extend st_b_16_1
 	sem = { SET(T1,D(a.i)); STOREB(T1,A(b.i)); }
 	
 extend st_b_16_3
-	sem = { SETI(T1,off4); ADD(T1,T1,A(15)); STOREB(T2,T1); SET(D(a.i),T2); }
+	sem = { SETI(T1,off4); ADD(T1,T1,A(15)); STOREB(T2,T1); }
 	
 extend st_b_16_4
 	sem = { SETI(T1,off4); ADD(T1,T1,A(b.i)); STOREB(D(15),T1); }
@@ -1395,28 +1395,28 @@ extend st_d_post
 /////////////
 
 extend st_h_abs
-	sem = { SETI(T1,off); SET(D(a.i),T2); STOREH(T2,T1); } 
+	sem = { SETI(T1, off); SET(T2, D(a.i)); STOREH(T2, T1); } 
 	
 extend st_h_bo10, st_h_bo16
-	sem = { SETI(T1,off); ADD(T1,A(b.i),T1); SET(D(a.i),T2); STOREH(T2,T1); }
+	sem = { SETI(T1, off); ADD(T1,A(b.i),T1); SET(T2, D(a.i)); STOREH(T2, T1); }
 	
 extend st_h_pre
-	sem = { SETI(T1,off); ADD(A(b.i),A(b.i),T1); SET(D(a.i),T2); STOREH(T2,A(b.i)); }
+	sem = { SETI(T1, off); ADD(A(b.i),A(b.i),T1); SET(T2, D(a.i)); STOREH(T2,A(b.i)); }
 	
 extend st_h_post
-	sem = { SET(D(a.i),T2); STOREH(T2,A(b.i)); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
+	sem = { SET(D(a.i), T2); STOREH(T2, A(b.i)); SETI(T1,off); ADD(A(b.i), A(b.i), T1); }
 	
 extend st_h_16_1
-	sem = { SET(D(a.i),T2); STOREH(T2,A(b.i)); ADD(A(b.i),A(b.i),2); }
+	sem = { SET(D(a.i), T2); STOREH(T2, A(b.i)); ADD(A(b.i), A(b.i), 2); }
 	
 extend st_h_16_4
-	sem = { SET(D(a.i),T2); STOREH(T2,A(b.i)); }
+	sem = { SET(D(a.i), T2); STOREH(T2, A(b.i)); }
 	
 extend st_h_16_3
-	sem = { SETI(T1,off4); MUL(T1,T1,2); ADD(T1,T1,A(15)); SET(D(a.i),T2); STOREH(T2,T1); }
+	sem = { SETI(T1, off4); SETI(T2, 2); MUL(T1, T1, T2); ADD(T1,T1,A(15)); SET(T2, D(a.i)); STOREH(T2,T1); }
 	
 extend st_h_16_2
-	sem = { SETI(T1,off4); MUL(T1,T1,2); ADD(T1,T1,A(b.i)); STOREH(D(15),T1); }
+	sem = { SETI(T1, off4); SETI(T2, 2); MUL(T1, T1, T2); ADD(T1,T1,A(b.i)); STOREH(D(15),T1); }
 	
 	
 	
@@ -1450,10 +1450,10 @@ extend st_w_post
 	sem = { SET(D(a.i),T2); STOREW(T2,A(b.i)); SETI(T1,off); ADD(A(b.i),A(b.i),T1); }
 	
 extend st_w_16_5
-	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(b.i)); STOREW(D(15),T1); }
+	sem = { SETI(T1,off4); SETI(T2, 4); MUL(T1, T1, T2); ADD(T1,T1,A(b.i)); STOREW(D(15),T1); }
 	
 extend st_w_16_4
-	sem = { SETI(T1,off4); MUL(T1,T1,4); ADD(T1,T1,A(15)); SET(T2, D(a.i)); STOREW(T2,T1); }
+	sem = { SETI(T1,off4); SETI(T2, 4); MUL(T1, T1, T2); ADD(T1,T1,A(15)); SET(T2, D(a.i)); STOREW(T2,T1); }
 	
 extend st_w_16_3
 	sem = { SET(T2,D(a.i)); STOREW(T2,A(b.i)); ADD(A(b.i),A(b.i),4); }
@@ -1462,7 +1462,7 @@ extend st_w_16_2
 	sem = { SET(T2,D(a.i)); STOREW(T2,A(b.i)); }
 	
 extend st_w_16_1
-	sem = { SETI(T1,const); MUL(T1,T1,4); ADD(T1,T1,A(10)); STOREW(D(15),T1); }
+	sem = { SETI(T1,const); SETI(T2, 4); MUL(T1, T1, T2); ADD(T1,T1,A(10)); STOREW(D(15),T1); }
 
 
 ////////////

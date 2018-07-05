@@ -641,6 +641,7 @@ void Inst::semKernel(otawa::sem::Block &block) {
 #define SHL(a, b, c)	block.add(sem::shl(a, b, c))
 #define SHR(a, b, c)	block.add(sem::shr(a, b, c))
 #define CMP(a, b, c)	block.add(sem::cmp(a, b, c))
+#define CMPU(a, b, c)	block.add(sem::cmpu(a, b, c))
 #define IF(a, b, c)		block.add(sem::_if(a, b, c))
 #define SCRATCH8(a)		SCRATCH(a); SCRATCH(a + 1)
 #define BRANCH(a)			block.add(sem::branch(a))

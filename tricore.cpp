@@ -48,7 +48,8 @@ static hard::PlainBank regA("A", hard::Register::ADDR,  32, "a%d", 16);
 static hard::Register regPSW("PSW", hard::Register::BITS, 32);
 static hard::Register regPC("PC", hard::Register::ADDR, 32);
 static hard::Register regFCX("FCX", hard::Register::ADDR, 32);
-static hard::MeltedBank misc("misc", &regPSW, &regPC,&regFCX, 0);
+static hard::Register regPSW_CFLAG("PSW_CFLAG", hard::Register::INT, 32);
+static hard::MeltedBank misc("misc", &regPSW, &regPC,&regFCX, &regPSW_CFLAG, 0);
 
 static const hard::RegBank *banks[] = {
 	&regD,
@@ -612,6 +613,7 @@ void Inst::semKernel(otawa::sem::Block &block) {
 #define _PSW		regPSW.platformNumber()
 #define FCX			regFCX.platformNumber()
 #define PC			regPC.platformNumber()
+#define _PSW_CFLAG regPSW_CFLAG.platformNumber()
 #define A10			A(10)
 #define A11			A(11)
 #define A15			A(15)
@@ -646,6 +648,7 @@ void Inst::semKernel(otawa::sem::Block &block) {
 #define SCRATCH8(a)		SCRATCH(a); SCRATCH(a + 1)
 #define BRANCH(a)			block.add(sem::branch(a))
 #define CONT()					block.add(sem::cont())
+#define NOP()			block.add(sem::nop())
 #define LOADW(d, a)		block.add(sem::load(d, a, 4))
 #define LOADD(d, a)		block.add(sem::load(d, a, 8))
 #define LOADSB(d, a)	block.add(sem::load(d, a, 1))

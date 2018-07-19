@@ -177,8 +177,9 @@ public:
 	Segment(Process& process,
 		CString name,
 		address_t address,
-		size_t size)
-	: otawa::Segment(name, address, size, EXECUTABLE), proc(process) { }
+		size_t size,
+		flags_t flags)
+	: otawa::Segment(name, address, size, flags), proc(process) { }
 
 protected:
 	virtual otawa::Inst *decode(address_t address);
@@ -200,7 +201,8 @@ public:
 		_memory(0),
 		init(false),
 		map(0),
-		no_stack(true)
+		no_stack(true),
+		_file(nullptr)
 	{
 		ASSERTP(manager, "manager required");
 		ASSERTP(pf, "platform required");
@@ -311,7 +313,14 @@ public:
 			assert(sect);
 			gel_sect_infos(sect, &infos);
 			if(infos.vaddr != 0 && infos.size != 0) {
-				Segment *seg = new Segment(*this, infos.name, infos.vaddr, infos.size);
+				Segment::flags_t flags = 0;
+				if((infos.flags & SHF_WRITE) != 0)
+					flags |= Segment::WRITABLE;
+				if((infos.flags & SHF_EXECINSTR) != 0)
+					flags |= Segment::EXECUTABLE;
+				if((infos.flags & SHF_ALLOC) != 0)
+					flags |= Segment::INITIALIZED;
+				Segment *seg = new Segment(*this, infos.name, infos.vaddr, infos.size, flags);
 				file->addSegment(seg);
 			}
 		}

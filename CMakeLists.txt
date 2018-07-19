@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
+add_definitions(-g3 -O2)
 set(CMAKE_INSTALL_RPATH "\\$ORIGIN/../..")
 set(CMAKE_MACOSX_RPATH true)
 

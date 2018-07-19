@@ -25,6 +25,7 @@
 #include <otawa/prog/Segment.h>
 #include <otawa/hard.h>
 #include <otawa/loader/gliss.h>
+#include <otawa/sem/inst.h>
 #include <gel/gel.h>
 #include <gel/gel_elf.h>
 #include <gel/debug_line.h>
@@ -47,7 +48,8 @@ static hard::PlainBank regA("A", hard::Register::ADDR,  32, "a%d", 16);
 static hard::Register regPSW("PSW", hard::Register::BITS, 32);
 static hard::Register regPC("PC", hard::Register::ADDR, 32);
 static hard::Register regFCX("FCX", hard::Register::ADDR, 32);
-static hard::MeltedBank misc("misc", &regPSW, &regPC,&regFCX, 0);
+static hard::Register regPSW_CFLAG("PSW_CFLAG", hard::Register::INT, 32);
+static hard::MeltedBank misc("misc", &regPSW, &regPC,&regFCX, &regPSW_CFLAG, 0);
 
 static const hard::RegBank *banks[] = {
 	&regD,
@@ -136,7 +138,11 @@ public:
 		}
 		return out_regs;
 	}
+	
+	virtual void semInsts(otawa::sem::Block &block);
+	virtual void semKernel(otawa::sem::Block &block);
 
+	
 protected:
 	Process &proc;
 
@@ -574,6 +580,40 @@ otawa::Inst *Segment::decode(address_t address) {
 }
 
 
+static void tricore_sem(tricore_inst_t *inst, otawa::sem::Block& block);
+
+
+/**
+ */
+void Inst::semInsts (otawa::sem::Block &block) {
+
+	// get the block
+	tricore_inst_t *inst = proc.decode_raw(address());
+	if(inst->ident == TRICORE_UNKNOWN)
+		return;
+	tricore_sem(inst, block);
+	tricore_free_inst(inst);
+
+//	// fix spurious instructions possibly generated with conditional instructions
+//	for(int i = 0; i < block.length(); i++)
+//		if(block[i].op == otawa::sem::CONT) {
+//			block.setLength(i);
+//			break;
+//		}
+}
+
+
+/**
+ */
+void Inst::semKernel(otawa::sem::Block &block) {
+	tricore_inst_t *inst = proc.decode_raw(address());
+	if(inst->ident == TRICORE_UNKNOWN)
+		return;
+	tricore_sem(inst, block);
+	tricore_free_inst(inst);
+}
+
+
 /* semantics support */
 
 #define D(n)		regD[n]->platformNumber()
@@ -582,6 +622,7 @@ otawa::Inst *Segment::decode(address_t address) {
 #define _PSW		regPSW.platformNumber()
 #define FCX			regFCX.platformNumber()
 #define PC			regPC.platformNumber()
+#define _PSW_CFLAG regPSW_CFLAG.platformNumber()
 #define A10			A(10)
 #define A11			A(11)
 #define A15			A(15)
@@ -611,10 +652,12 @@ otawa::Inst *Segment::decode(address_t address) {
 #define SHL(a, b, c)	block.add(sem::shl(a, b, c))
 #define SHR(a, b, c)	block.add(sem::shr(a, b, c))
 #define CMP(a, b, c)	block.add(sem::cmp(a, b, c))
+#define CMPU(a, b, c)	block.add(sem::cmpu(a, b, c))
 #define IF(a, b, c)		block.add(sem::_if(a, b, c))
 #define SCRATCH8(a)		SCRATCH(a); SCRATCH(a + 1)
 #define BRANCH(a)			block.add(sem::branch(a))
-#define CONT					block.add(sem::cont())
+#define CONT()					block.add(sem::cont())
+#define NOP()			block.add(sem::nop())
 #define LOADW(d, a)		block.add(sem::load(d, a, 4))
 #define LOADD(d, a)		block.add(sem::load(d, a, 8))
 #define LOADSB(d, a)	block.add(sem::load(d, a, 1))

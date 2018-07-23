@@ -1,3 +1,25 @@
+/*
+ *	tricore -- OTAWA loader to support TriCore with GLISS2
+ *
+ *	This file is part of OTAWA
+ *	Copyright (c) 2011-12, IRIT UPS.
+ *
+ *	OTAWA is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 2 of the License, or
+ *	(at your option) any later version.
+ *
+ *	OTAWA is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with OTAWA; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+type val = card(32)
 
 canon int(32) "T1"
 canon int(32) "T2"
@@ -16,6 +38,7 @@ canon card(32) "GT"
 canon card(32) "LE"
 canon card(32) "ULE"
 
+canon val "D"(val) 
 
 macro D(i) 				= "D"(i)
 macro A(i) 				= "A"(i)
@@ -27,43 +50,43 @@ macro T2				= "T2"
 macro T3				= "T3"
 macro T4				= "T4"
 macro ADD(p1, p2, p3)	= "ADD"(p1, p2, p3)
+macro ASR(d, a, b)		= "ASR"(d, a, b)
 macro SUB(p1, p2, p3)	= "SUB"(p1, p2, p3)
 macro SHL(p1, p2, p3)	= "SHL"(p1, p2, p3)
-macro SHR(p1, p2, p3) = "SHR"(p1, p2, p3)
+macro SHR(p1, p2, p3)	= "SHR"(p1, p2, p3)
 macro SCRATCH(a)		= "SCRATCH"(a)
 macro SET(p1, p2)		= "SET"(p1, p2)
 macro SETI(p1, p2)		= "SETI"(p1, p2)
-macro CMP(p1, p2, p3) = "CMP"(p1, p2, p3)
-macro CMPU(p1, p2, p3) = "CMPU"(p1, p2, p3)
-macro IF(p1, p2, p3) = "IF"(p1, p2, p3)
-macro SCRATCH8(a) = "SCRATCH8"(a)
-macro BRANCH(a) = "BRANCH"(a)
-macro CONT() = "CONT"()
-macro NOP() = "NOP"()
-macro LOADW(d,a) = "LOADW"(d,a)
-macro LOADD(d,a) = "LOADD"(d,a)
-macro LOADSB(d,a) = "LOADSB"(d,a)
-macro LOADUB(d,a) = "LOADUB"(d,a)
-macro LOADSH(d,a) = "LOADSH"(d,a)
-macro LOADUH(d,a) = "LOADUH"(d,a)
-macro STOREW(d,a) = "STOREW"(d,a)
-macro STORED(d,a) = "STORED"(d,a)
-macro STOREB(d,a) = "STOREB"(d,a)
-macro STOREH(d,a) = "STOREH"(d,a)
-macro TRAP(a) = "TRAP"(a)
-macro ASR(a,b,c) = "ASR"(a,b,c)
-macro NEG(d,a) = "NEG"(d,a)
-macro NOT(d,a) = "NOT"(d,a)
-macro AND(d,a,b) = "AND"(d,a,b)
-macro OR(d,a,b) = "OR"(d,a,b)
-macro XOR(d,a,b) = "XOR"(d,a,b)
-macro MUL(d,a,b) = "MUL"(d,a,b)
-macro MULU(d,a,b) = "MULU"(d,a,b)
-macro DIV(d,a,b) = "DIV"(d,a,b)
-macro DIVU(d,a,b) = "DIVU"(d,a,b)
-macro MOD(d,a,b) = "MOD"(d,a,b)
-macro MODU(d,a,b) = "MODU"(d,a,b)
-macro S15(n) = "S15"(n)
+macro CMP(p1, p2, p3)	= "CMP"(p1, p2, p3)
+macro CMPU(p1, p2, p3)	= "CMPU"(p1, p2, p3)
+macro IF(p1, p2, p3)	= "IF"(p1, p2, p3)
+macro SCRATCH8(a)		= "SCRATCH8"(a)
+macro BRANCH(a)			= "BRANCH"(a)
+macro CONT()			= "CONT"()
+macro NOP()				= "NOP"()
+macro LOADW(d, a)		= "LOADW"(d,a)
+macro LOADD(d, a)		= "LOADD"(d,a)
+macro LOADSB(d,a)		= "LOADSB"(d,a)
+macro LOADUB(d,a)		= "LOADUB"(d,a)
+macro LOADSH(d,a)		= "LOADSH"(d,a)
+macro LOADUH(d,a)		= "LOADUH"(d,a)
+macro STOREW(d,a)		= "STOREW"(d,a)
+macro STORED(d,a)		= "STORED"(d,a)
+macro STOREB(d,a)		= "STOREB"(d,a)
+macro STOREH(d,a)		= "STOREH"(d,a)
+macro TRAP(a)			= "TRAP"(a)
+macro NEG(d, a)			= "NEG"(d, a)
+macro NOT(d, a)			= "NOT"(d, a)
+macro AND(d, a, b)		= "AND"(d, a, b)
+macro OR(d, a, b)		= "OR"(d, a, b)
+macro XOR(d, a, b)		= "XOR"(d, a, b)
+macro MUL(d, a, b)		= "MUL"(d, a, b)
+macro MULU(d, a, b)		= "MULU"(d, a, b)
+macro DIV(d, a, b)		= "DIV"(d, a, b)
+macro DIVU(d, a, b)		= "DIVU"(d, a, b)
+macro MOD(d, a, b)		= "MOD"(d, a, b)
+macro MODU(d, a, b)		= "MODU"(d, a, b)
+macro S15(n)			= "S15"(n)
 
 macro LOAD_UPPER_CONTEXT = \
 		LOADW(T3, T1); ADD(T1, T1, 4); \
@@ -199,7 +222,7 @@ extend disable2
 	sem = { SCRATCH(D(a.i)); }
 	
 //op 16 bits
-extend sat16_b , sat16_bu , sat16_h , sat16_hu , sh_16 , sha_16 , subs16
+extend sat16_b , sat16_bu , sat16_h , sat16_hu , sh_16 , subs16
 	sem = { SCRATCH(D(a.i)); }
 
 extend imask_1, imask_2, imask_3, imask_4
@@ -226,8 +249,7 @@ extend mul_u_const9, mul_u
 // scratch PSW, d[c]
 extend adds_reg, adds_const9, addsh_s, addsh_u,adds_u_reg,adds_u_const, 
 muls_reg,muls_const9,muls_u_reg,muls_u_const, 
-sha_reg, sha_const9 , 
-sha_h_reg , sha_h_const , shas_reg , shas_const, 
+shas_reg , shas_const, 
 csub, csubn, subb, subh, subc, subs, subsh, subshu,
 cmpf,
 utof, qseedf, q31tof, itof, ftouz, ftou, ftoq31z, ftoq31, ftoiz, ftoi, 
@@ -237,8 +259,6 @@ abs_reg, absdif_const9, absdif_reg, abs_b , abs_h , absdifs_reg , absdifs_const9
 	
 extend updfl, rstv, mtcr
 	sem = { SCRATCH(_PSW); }
-	
-
 
 
 //////////////
@@ -1004,22 +1024,70 @@ extend loopu
 ///////////////
 
 extend call
-	sem = { SETI(T2,__IADDR +4); SET(T1,FCX); LOADW(T3,T1); SAVE_UPPER_CONTEXT; SET(FCX,T3); BRANCH(__IADDR+ const*2); SET(A(11),T2);}
+	sem = {
+		SETI(T2, __IADDR + 4);
+		SET(T1, FCX);
+		LOADW(T3, T1);
+		SAVE_UPPER_CONTEXT;
+		SET(FCX,T3);
+		BRANCH(__IADDR + const * 2);
+		SET(A(11), T2);
+	}
 	
 extend call16
-	sem = { SETI(T2,__IADDR +2); SET(T1,FCX); LOADW(T3,T1); SAVE_UPPER_CONTEXT; SET(FCX,T3); BRANCH(__IADDR+ const*2); SET(A(11),T2); }
+	sem = {
+		SETI(T2,__IADDR + 2);
+		SET(T1, FCX);
+		LOADW(T3, T1);
+		SAVE_UPPER_CONTEXT;
+		SET(FCX,T3);
+		BRANCH(__IADDR + const * 2);
+		SET(A(11), T2);
+	}
 	
 extend calla
-	sem = { SETI(T2,__IADDR +4); SET(T1,FCX); LOADW(T3,T1); SAVE_UPPER_CONTEXT; SET(FCX,T3); BRANCH(const); SET(A(11),T2); }
+	sem = {
+		SETI(T2,__IADDR + 4);
+		SET(T1, FCX);
+		LOADW(T3, T1);
+		SAVE_UPPER_CONTEXT;
+		SET(FCX,T3);
+		BRANCH(const);
+		SET(A(11), T2);
+	}
 	
 extend calli
-	sem = { SETI(T2,__IADDR +4); SET(T1,FCX); LOADW(T3,T1); SAVE_UPPER_CONTEXT; SET(FCX,T3); BRANCH(A(a.i)); SET(A(11),T2); }
+	sem = {
+		SETI(T2, __IADDR + 4);
+		SET(T1, FCX);
+		LOADW(T3, T1);
+		SAVE_UPPER_CONTEXT;
+		SET(FCX,T3);
+		BRANCH(A(a.i));
+		SET(A(11), T2);
+	}
 	
 extend fcall
-	sem = { SETI(T1,__IADDR+4); SUB(T2,A(10),4); STOREW(T2,A(11)); BRANCH(__IADDR + const*2); SET(A(11),T1); SET(A(10),T2); }
+	sem = {
+		SETI(T1, __IADDR + 4);
+		SETI(T4, 4);
+		SUB(T2, A(10), T4);
+		STOREW(T2, A(11));
+		BRANCH(__IADDR + const * 2);
+		SET(A(11), T1);
+		SET(A(10), T2);
+	}
 	
 extend fcalla
-	sem = { SETI(T1,__IADDR+4); SUB(T2,A(10),4); STOREW(T2,A(11)); BRANCH(const); SET(A(11),T1); SET(A(10),T2); }
+	sem = {
+		SETI(T1, __IADDR + 4);
+		SETI(T4, 4);
+		SUB(T2, A(10), T4);
+		STOREW(T2, A(11));
+		BRANCH(const);
+		SET(A(11), T1);
+		SET(A(10), T2);
+	}
 	
 extend fcalli
 	sem = { SETI(T1,__IADDR+4); SUB(T2,A(10),4); STOREW(T2,A(11)); BRANCH(A(a.i)); SET(A(11),T1); SET(A(10),T2); }
@@ -1493,4 +1561,51 @@ extend addc_reg
 	
 extend nop32, nop_16
 	sem = { NOP(); }
+
+
+/* sha */
+extend sha_const9
+	sem = {
+		if coerce(int(6), const<5..0>) >= 0 then
+			SCRATCH(_PSW_CFLAG);
+			SETI(T1, const<5..0>);
+			SHL(D(c.i), D(a.i), T1);
+		else
+			SETI(T1, -coerce(int(6), const<5..0>));
+			ASR(D(c.i), D(a.i), T1);
+			SCRATCH(_PSW_CFLAG);
+		endif;
+	}
+
+extend sha_16
+	sem = {
+		if coerce(int(4), const) >= 0 then
+			SCRATCH(_PSW_CFLAG);
+			SETI(T1, const);
+			SHL(D(a.i), D(a.i), T1);
+		else
+			SETI(T1, -coerce(int(4), const));
+			let x = D(a.i);	// workaround bad bug in preprocessor
+			ASR(x, D(a.i), T1);
+			SCRATCH(_PSW_CFLAG);
+		endif;
+	}
+
+extend sha_reg
+	sem = {
+		SCRATCH(_PSW_CFLAG);
+		SETI(T1, 26);
+		SHL(T2, D(b.i), T1);
+		ASR(T2, T2, T1);
+		SETI(T1, 0);
+		CMP(T1, T2, T1);
+		IF(GE, T1, 2);
+		SHL(D(c.i), D(a.i), T2);
+		CONT;
+		NEG(T2, T2);
+		ASR(D(c.i), D(a.i), T2);
+	}
+
+extend sha_h_reg, sha_h_const
+	sem = { SCRATCH(D(c.i)); }	// vectorial
 

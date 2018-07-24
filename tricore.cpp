@@ -52,9 +52,9 @@ static hard::Register regPSW_CFLAG("PSW_CFLAG", hard::Register::INT, 32);
 static hard::MeltedBank misc("misc", &regPSW, &regPC,&regFCX, &regPSW_CFLAG, 0);
 
 static const hard::RegBank *banks[] = {
-	&regD,
-	&regA,
-	&misc
+	&regD, // 0 -15
+	&regA, // 16-31
+	&misc // 32 - 35
 };
 
 static const Array<const hard::RegBank *> banks_table(3, banks);
@@ -492,18 +492,52 @@ public:
 		{ val = tricore_mem_read8(_memory, at.offset()); }
 	virtual void get(Address at, unsigned char& val)
 		{ val = tricore_mem_read8(_memory, at.offset()); }
-	virtual void get(Address at, signed short& val)
-		{ val = tricore_mem_read16(_memory, at.offset()); }
-	virtual void get(Address at, unsigned short& val)
-		{ val = tricore_mem_read16(_memory, at.offset()); }
-	virtual void get(Address at, signed long& val)
-		{ val = tricore_mem_read32(_memory, at.offset()); }
-	virtual void get(Address at, unsigned long& val)
-		{ val = tricore_mem_read32(_memory, at.offset()); }
-	virtual void get(Address at, signed long long& val)
-		{ val = tricore_mem_read64(_memory, at.offset()); }
-	virtual void get(Address at, unsigned long long& val)
-		{ val = tricore_mem_read64(_memory, at.offset()); }
+	virtual void get(Address at, signed short& val) {
+		unsigned long val1 = tricore_mem_read8(_memory, at.offset());
+		unsigned long val2 = tricore_mem_read8(_memory, at.offset() + 1);
+		val = val2 << 8 | val1;
+	}
+	virtual void get(Address at, unsigned short& val) {
+		unsigned long val1 = tricore_mem_read8(_memory, at.offset());
+		unsigned long val2 = tricore_mem_read8(_memory, at.offset() + 1);
+		val = val2 << 8 | val1;
+	}
+	virtual void get(Address at, signed long& val) {
+		unsigned long val1 = tricore_mem_read8(_memory, at.offset());
+		unsigned long val2 = tricore_mem_read8(_memory, at.offset() + 1);
+		unsigned long val3 = tricore_mem_read8(_memory, at.offset() + 2);
+		unsigned long val4 = tricore_mem_read8(_memory, at.offset() + 3);
+		val = (val4 << 24) | (val3 << 16) | (val2 << 8) | val1;
+	}
+	virtual void get(Address at, unsigned long& val) {
+		unsigned long val1 = tricore_mem_read8(_memory, at.offset());
+		unsigned long val2 = tricore_mem_read8(_memory, at.offset() + 1);
+		unsigned long val3 = tricore_mem_read8(_memory, at.offset() + 2);
+		unsigned long val4 = tricore_mem_read8(_memory, at.offset() + 3);
+		val = (val4 << 24) | (val3 << 16) | (val2 << 8) | val1;
+	}
+	virtual void get(Address at, signed long long& val) {
+		unsigned long val1 = tricore_mem_read8(_memory, at.offset());
+		unsigned long val2 = tricore_mem_read8(_memory, at.offset() + 1);
+		unsigned long val3 = tricore_mem_read8(_memory, at.offset() + 2);
+		unsigned long val4 = tricore_mem_read8(_memory, at.offset() + 3);
+		unsigned long val5 = tricore_mem_read8(_memory, at.offset() + 4);
+		unsigned long val6 = tricore_mem_read8(_memory, at.offset() + 5);
+		unsigned long val7 = tricore_mem_read8(_memory, at.offset() + 6);
+		unsigned long val8 = tricore_mem_read8(_memory, at.offset() + 7);
+		val = (val8 << 56) | (val7 << 48) | (val6 << 40) | (val5 << 32) | (val4 << 24) | (val3 << 16) | (val2 << 8) | val1;
+	}
+	virtual void get(Address at, unsigned long long& val) {
+		unsigned long val1 = tricore_mem_read8(_memory, at.offset());
+		unsigned long val2 = tricore_mem_read8(_memory, at.offset() + 1);
+		unsigned long val3 = tricore_mem_read8(_memory, at.offset() + 2);
+		unsigned long val4 = tricore_mem_read8(_memory, at.offset() + 3);
+		unsigned long val5 = tricore_mem_read8(_memory, at.offset() + 4);
+		unsigned long val6 = tricore_mem_read8(_memory, at.offset() + 5);
+		unsigned long val7 = tricore_mem_read8(_memory, at.offset() + 6);
+		unsigned long val8 = tricore_mem_read8(_memory, at.offset() + 7);
+		val = (val8 << 56) | (val7 << 48) | (val6 << 40) | (val5 << 32) | (val4 << 24) | (val3 << 16) | (val2 << 8) | val1;
+	}
 	virtual void get(Address at, Address& val)
 		{ val = tricore_mem_read32(_memory, at.offset()); }
 	virtual void get(Address at, string& str) {

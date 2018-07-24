@@ -319,7 +319,7 @@ extend add16_1
 	sem = { SCRATCH(_PSW); ADD(D(a.i), D(a.i), D(b.i)); }
 	
 extend add16_2
-	sem = { SCRATCH(_PSW); SETI(T1, const.v); ADD(D(a.i), D(a.i), T1); }
+	sem = { SCRATCH(_PSW); SETI(T1, const); ADD(D(a.i), D(a.i), T1); }
 
 extend add16_3
 	sem = { SCRATCH(_PSW); ADD(D(15), D(a.i), D(b.i));}
@@ -1566,12 +1566,12 @@ extend nop32, nop_16
 /* sha */
 extend sha_const9
 	sem = {
-		if coerce(int(6), const<5..0>) >= 0 then
+		if coerce(int(6), const9<5..0>) >= 0 then
 			SCRATCH(_PSW_CFLAG);
-			SETI(T1, const<5..0>);
+			SETI(T1, const9<5..0>);
 			SHL(D(c.i), D(a.i), T1);
 		else
-			SETI(T1, -coerce(int(6), const<5..0>));
+			SETI(T1, -coerce(int(6), const9<5..0>));
 			ASR(D(c.i), D(a.i), T1);
 			SCRATCH(_PSW_CFLAG);
 		endif;

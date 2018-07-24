@@ -49,12 +49,13 @@ static hard::Register regPSW("PSW", hard::Register::BITS, 32);
 static hard::Register regPC("PC", hard::Register::ADDR, 32);
 static hard::Register regFCX("FCX", hard::Register::ADDR, 32);
 static hard::Register regPSW_CFLAG("PSW_CFLAG", hard::Register::INT, 32);
-static hard::MeltedBank misc("misc", &regPSW, &regPC,&regFCX, &regPSW_CFLAG, 0);
+static hard::Register regCTX("CTX", hard::Register::INT, 32);
+static hard::MeltedBank misc("misc", &regPSW, &regPC,&regFCX, &regPSW_CFLAG, &regCTX, 0);
 
 static const hard::RegBank *banks[] = {
 	&regD, // 0 -15
 	&regA, // 16-31
-	&misc // 32 - 35
+	&misc // 32 - 36
 };
 
 static const Array<const hard::RegBank *> banks_table(3, banks);
@@ -657,6 +658,7 @@ void Inst::semKernel(otawa::sem::Block &block) {
 #define FCX			regFCX.platformNumber()
 #define PC			regPC.platformNumber()
 #define _PSW_CFLAG regPSW_CFLAG.platformNumber()
+#define _CTX		regCTX.platformNumber()
 #define A10			A(10)
 #define A11			A(11)
 #define A15			A(15)

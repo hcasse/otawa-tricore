@@ -2,12 +2,15 @@ extend loop , loopu
 	otawa_target = __IADDR + coerce(int(32),const)*2
 
 extend call , fcall 
-	otawa_target = __IADDR + coerce(int(32),const)*2
+	otawa_target = target // __IADDR + coerce(int(32),const)*2
 	
 extend call16
-	otawa_target = __IADDR + coerce(int(32),const)*2
+	otawa_target = target // __IADDR + coerce(int(32),const)*2
 
-extend calla , fcalla , ja , jla
+extend calla , fcalla
+	otawa_target = target // const<23..20>::0b0000000::const<19..0>::0b0
+
+extend ja , jla
 	otawa_target = const<23..20>::0b0000000::const<19..0>::0b0
 
 extend calli , fcalli , ji , ji_16 , jli

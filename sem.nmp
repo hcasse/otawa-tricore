@@ -27,6 +27,7 @@ canon int(32) "T3"
 canon int(32) "T4"
 canon int(32) "_PSW"
 canon int(32) "_PSW_CFLAG"
+canon int(32) "_CTX" 
 canon int(32) "FCX"
 canon card(32) "NE"
 canon card(32) "EQ"
@@ -44,6 +45,7 @@ macro D(i) 				= "D"(i)
 macro A(i) 				= "A"(i)
 macro _PSW				= "_PSW"
 macro _PSW_CFLAG		= "_PSW_CFLAG"
+macro _CTX				= "_CTX"
 macro FCX				= "FCX"
 macro T1				= "T1"
 macro T2				= "T2"
@@ -1026,13 +1028,11 @@ extend loopu
 extend call
 	sem = {
 		SETI(T2, __IADDR + 4);
-		SET(T1, FCX);
-		// LOADW(T3, T1);
+		SET(T1, _CTX);
 		SAVE_UPPER_CONTEXT;
-		// SET(FCX,T3);
 		SETI(T1, 64);
-		ADD(FCX, FCX, T1);
-		BRANCH(__IADDR + const * 2);
+		ADD(_CTX, _CTX, T1);
+		BRANCH(target); // BRANCH(__IADDR + const * 2);
 		SET(A(11), T2);
 	}
 	
@@ -1043,7 +1043,7 @@ extend call16
 		LOADW(T3, T1);
 		SAVE_UPPER_CONTEXT;
 		SET(FCX,T3);
-		BRANCH(__IADDR + const * 2);
+		BRANCH(target); // BRANCH(__IADDR + const * 2);
 		SET(A(11), T2);
 	}
 	
@@ -1054,7 +1054,7 @@ extend calla
 		LOADW(T3, T1);
 		SAVE_UPPER_CONTEXT;
 		SET(FCX,T3);
-		BRANCH(const);
+		BRANCH(target); // BRANCH(const);
 		SET(A(11), T2);
 	}
 	
@@ -1075,7 +1075,7 @@ extend fcall
 		SETI(T4, 4);
 		SUB(T2, A(10), T4);
 		STOREW(T2, A(11));
-		BRANCH(__IADDR + const * 2);
+		BRANCH(target); // BRANCH(__IADDR + const * 2);
 		SET(A(11), T1);
 		SET(A(10), T2);
 	}
@@ -1086,7 +1086,7 @@ extend fcalla
 		SETI(T4, 4);
 		SUB(T2, A(10), T4);
 		STOREW(T2, A(11));
-		BRANCH(const);
+		BRANCH(target); // BRANCH(const);
 		SET(A(11), T1);
 		SET(A(10), T2);
 	}
@@ -1101,13 +1101,11 @@ extend ret, ret_16, rfe, rfe16
 	sem = { 
 		SCRATCH(_PSW); 
 		BRANCH(A(11)); 
-		// SET(T1,FCX);
 		SETI(T1, 64);
-		SUB(T1, FCX, T1);
+		SUB(T1, _CTX, T1);
 		LOAD_UPPER_CONTEXT; 
-		// STOREW(FCX,T1);
 		SETI(T1, 64);
-		SUB(T1, FCX, T1);		 
+		SUB(_CTX, _CTX, T1);		 
 	}
 	
 	

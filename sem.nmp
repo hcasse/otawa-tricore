@@ -89,75 +89,75 @@ macro MODU(d, a, b)		= "MODU"(d, a, b)
 macro S15(n)			= "S15"(n)
 
 macro LOAD_UPPER_CONTEXT = \
-		LOADW(T3, T1); ADD(T1, T1, 4); \
-		LOADW(_PSW, T1); ADD(T1, T1, 4); \
-		LOADW(A(10), T1); ADD(T1, T1, 4); \
-		LOADW(A(11), T1); ADD(T1, T1, 4); \
-		LOADW(D(8), T1); ADD(T1, T1, 4);  \
-		LOADW(D(9), T1); ADD(T1, T1, 4);  \
-		LOADW(D(10), T1); ADD(T1, T1, 4); \
-		LOADW(D(11), T1); ADD(T1, T1, 4); \
-		LOADW(A(12), T1); ADD(T1, T1, 4); \
-		LOADW(A(13), T1); ADD(T1, T1, 4); \
-		LOADW(A(14), T1); ADD(T1, T1, 4); \
-		LOADW(A(15), T1); ADD(T1, T1, 4); \
-		LOADW(D(12), T1); ADD(T1, T1, 4); \
-		LOADW(D(13), T1); ADD(T1, T1, 4); \
-		LOADW(D(14), T1); ADD(T1, T1, 4); \
+		LOADW(T3, T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(_PSW, T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(10), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(11), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(D(8), T1); SETI(T2, 4); ADD(T1, T1, T2);  \
+		LOADW(D(9), T1); SETI(T2, 4); ADD(T1, T1, T2);  \
+		LOADW(D(10), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(D(11), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(12), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(13), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(14), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(15), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(D(12), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(D(13), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(D(14), T1); SETI(T2, 4); ADD(T1, T1, T2); \
 		LOADW(D(15), T1); 
 		
 macro SAVE_UPPER_CONTEXT =	\
-		STOREW(FCX, T1); ADD(T1, T1, 4); \
-		STOREW(_PSW, T1); ADD(T1, T1, 4); \
-		STOREW(A(10), T1); ADD(T1, T1, 4); \
-		STOREW(A(11), T1); ADD(T1, T1, 4); \
-		STOREW(D(8), T1); ADD(T1, T1, 4); \
-		STOREW(D(9), T1); ADD(T1, T1, 4); \
-		STOREW(D(10), T1); ADD(T1, T1, 4); \
-		STOREW(D(11), T1); ADD(T1, T1, 4); \
-		STOREW(A(12), T1); ADD(T1, T1, 4); \
-		STOREW(A(13), T1); ADD(T1, T1, 4); \
-		STOREW(A(14), T1); ADD(T1, T1, 4); \
-		STOREW(A(15), T1); ADD(T1, T1, 4); \
-		STOREW(D(12), T1); ADD(T1, T1, 4); \
-		STOREW(D(13), T1); ADD(T1, T1, 4); \
-		STOREW(D(14), T1); ADD(T1, T1, 4); \
+		STOREW(FCX, T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(_PSW, T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(10), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(11), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(8), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(9), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(10), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(11), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(12), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(13), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(14), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(15), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(12), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(13), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(14), T1); SETI(T2, 4); ADD(T1, T1, T2); \
 		STOREW(D(15), T1); 
 		
 macro LOAD_LOWER_CONTEXT = \
-		LOADW(FCX, T1); ADD(T1, T1, 4); \
-		LOADW(A(11), T1); ADD(T1, T1,4 ); \
-		LOADW(A(2), T1); ADD(T1, T1, 4); \
-		LOADW(A(3), T1); ADD(T1, T1, 4); \
-		LOADW(D(0), T1); ADD(T1, T1, 4);  \
-		LOADW(D(1), T1); ADD(T1, T1, 4);  \
-		LOADW(D(2), T1); ADD(T1, T1, 4); \
-		LOADW(D(3), T1); ADD(T1, T1,4 ); \
-		LOADW(A(4), T1); ADD(T1, T1, 4); \
-		LOADW(A(5), T1); ADD(T1, T1,4 ); \
-		LOADW(A(6), T1); ADD(T1, T1, 4); \
-		LOADW(A(7), T1); ADD(T1, T1,4); \
-		LOADW(D(4), T1); ADD(T1, T1, 4); \
-		LOADW(D(5), T1); ADD(T1, T1, 4); \
-		LOADW(D(6), T1); ADD(T1, T1, 4); \
+		LOADW(FCX, T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(11), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(2), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(3), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(D(0), T1); SETI(T2, 4); ADD(T1, T1, T2);  \
+		LOADW(D(1), T1); SETI(T2, 4); ADD(T1, T1, T2);  \
+		LOADW(D(2), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(D(3), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(4), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(5), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(6), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(A(7), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(D(4), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(D(5), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		LOADW(D(6), T1); SETI(T2, 4); ADD(T1, T1, T2); \
 		LOADW(D(7), T1); 
 		
 macro SAVE_LOWER_CONTEXT =	\
-		STOREW(FCX, T1); ADD(T1, T1, 4); \
-		STOREW(A(11), T1); ADD(T1, T1, 4); \
-		STOREW(A(2), T1); ADD(T1, T1, 4); \
-		STOREW(A(3), T1); ADD(T1, T1, 4); \
-		STOREW(D(0), T1); ADD(T1, T1, 4); \
-		STOREW(D(1), T1); ADD(T1, T1, 4); \
-		STOREW(D(2), T1); ADD(T1, T1, 4); \
-		STOREW(D(3), T1); ADD(T1, T1, 4); \
-		STOREW(A(4), T1); ADD(T1, T1, 4); \
-		STOREW(A(5), T1); ADD(T1, T1, 4); \
-		STOREW(A(6), T1); ADD(T1, T1, 4); \
-		STOREW(A(7), T1); ADD(T1, T1, 4); \
-		STOREW(D(4), T1); ADD(T1, T1, 4); \
-		STOREW(D(5), T1); ADD(T1, T1, 4); \
-		STOREW(D(6), T1); ADD(T1, T1, 4); \
+		STOREW(FCX, T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(11), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(2), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(3), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(0), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(1), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(2), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(3), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(4), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(5), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(6), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(A(7), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(4), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(5), T1); SETI(T2, 4); ADD(T1, T1, T2); \
+		STOREW(D(6), T1); SETI(T2, 4); ADD(T1, T1, T2); \
 		STOREW(D(7), T1); 
 
 macro NE = "NE"
@@ -1027,9 +1027,11 @@ extend call
 	sem = {
 		SETI(T2, __IADDR + 4);
 		SET(T1, FCX);
-		LOADW(T3, T1);
+		// LOADW(T3, T1);
 		SAVE_UPPER_CONTEXT;
-		SET(FCX,T3);
+		// SET(FCX,T3);
+		SETI(T1, 64);
+		ADD(FCX, FCX, T1);
 		BRANCH(__IADDR + const * 2);
 		SET(A(11), T2);
 	}
@@ -1096,7 +1098,17 @@ extend fret, fret16
 	sem = { BRANCH(A(11)); SET(T1,A(10)); LOADW(A(11),T1); ADD(A(10),A(10),4); }
 	
 extend ret, ret_16, rfe, rfe16
-	sem = { SCRATCH(_PSW); BRANCH(A(11)); SET(T1,FCX); LOAD_UPPER_CONTEXT; STOREW(FCX,T1); }
+	sem = { 
+		SCRATCH(_PSW); 
+		BRANCH(A(11)); 
+		// SET(T1,FCX);
+		SETI(T1, 64);
+		SUB(T1, FCX, T1);
+		LOAD_UPPER_CONTEXT; 
+		// STOREW(FCX,T1);
+		SETI(T1, 64);
+		SUB(T1, FCX, T1);		 
+	}
 	
 	
 
@@ -1562,6 +1574,17 @@ extend addc_reg
 extend nop32, nop_16
 	sem = { NOP(); }
 
+
+extend sh_16
+	sem = {
+		if coerce(int(4), const<3..0>) >= 0 then
+			SETI(T1, const<3..0>);
+			SHL(D(a.i), D(a.i), T1);
+		else
+			SETI(T1, -coerce(int(4), const<3..0>));
+			SHR(D(a.i), D(a.i), T1);			
+		endif;	
+	}
 
 /* sha */
 extend sha_const9

@@ -1027,46 +1027,46 @@ extend loopu
 
 extend call
 	sem = {
-		SETI(T2, __IADDR + 4);
+		SETI(T4, __IADDR + 4);
 		SET(T1, _CTX);
 		SAVE_UPPER_CONTEXT;
 		SETI(T1, 64);
 		ADD(_CTX, _CTX, T1);
 		BRANCH(target); // BRANCH(__IADDR + const * 2);
-		SET(A(11), T2);
+		SET(A(11), T4);
 	}
 	
 extend call16
 	sem = {
-		SETI(T2,__IADDR + 2);
+		SETI(T4,__IADDR + 2);
 		SET(T1, FCX);
 		LOADW(T3, T1);
 		SAVE_UPPER_CONTEXT;
 		SET(FCX,T3);
 		BRANCH(target); // BRANCH(__IADDR + const * 2);
-		SET(A(11), T2);
+		SET(A(11), T4);
 	}
 	
 extend calla
 	sem = {
-		SETI(T2,__IADDR + 4);
+		SETI(T4,__IADDR + 4);
 		SET(T1, FCX);
 		LOADW(T3, T1);
 		SAVE_UPPER_CONTEXT;
 		SET(FCX,T3);
 		BRANCH(target); // BRANCH(const);
-		SET(A(11), T2);
+		SET(A(11), T4);
 	}
 	
 extend calli
 	sem = {
-		SETI(T2, __IADDR + 4);
+		SETI(T4, __IADDR + 4);
 		SET(T1, FCX);
 		LOADW(T3, T1);
 		SAVE_UPPER_CONTEXT;
 		SET(FCX,T3);
 		BRANCH(A(a.i));
-		SET(A(11), T2);
+		SET(A(11), T4);
 	}
 	
 extend fcall

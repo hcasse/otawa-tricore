@@ -361,7 +361,7 @@ public:
 			// Build the label if required
 			if(addr != Address::null) {
 				String label(infos.name);
-				Symbol *sym = new Symbol(*file, label, kind, addr);
+				Symbol *sym = new Symbol(*file, label, kind, addr, infos.size);
 				file->addSymbol(sym);
 			}
 		}

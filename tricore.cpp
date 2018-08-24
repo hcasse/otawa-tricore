@@ -345,6 +345,10 @@ public:
 			assert(sym);
 			gel_sym_info_t infos;
 			gel_sym_infos(sym, &infos);
+
+			if(infos.sect == SHN_ABS) // absolute value is not useful for the symbol
+				continue;
+
 			switch(ELF32_ST_TYPE(infos.info)) {
 			case STT_FUNC:
 				kind = Symbol::FUNCTION;

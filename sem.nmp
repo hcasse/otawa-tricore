@@ -868,7 +868,7 @@ extend jgtz
 	sem = { SETI(T2,__IADDR); SETI(T1,0); CMP(T1, D(b.i), T1); IF(GT, T1, 3); SETI(T2, __IADDR + disp * 2); BRANCH(T2); CONT;}
 	
 extend ji_16, ji
-	sem = { BRANCH(D(a.i)); }
+	sem = { BRANCH(A(a.i)); }
 	
 	
 	
@@ -1180,7 +1180,14 @@ extend rfm
 	sem = { SCRATCH(_PSW); }
 	
 extend rslcx
-	sem = { SET(T1,FCX); LOAD_LOWER_CONTEXT; STOREW(T1,FCX); }
+	sem = { 
+			//SET(T1,FCX); LOAD_LOWER_CONTEXT; STOREW(T1,FCX);
+			SETI(T1, 64);
+			SUB(T1, _CTX, T1);
+			LOAD_LOWER_CONTEXT;
+			SETI(T1, 64);
+			SUB(_CTX, _CTX, T1);			 
+		}
 	
 extend stlcx_abs
 	sem = { SETI(T1,off18); SAVE_LOWER_CONTEXT; }

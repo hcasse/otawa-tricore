@@ -64,7 +64,7 @@ static const Array<const hard::RegBank *> banks_table(3, banks);
 // register decoding
 class RegisterDecoder {
 public:
-	RegisterDecoder(void) {
+	RegisterDecoder(void) { // the used register is decided here
 		
 		// clear the map
 		for(int i = 0; i < TRICORE_REG_COUNT; i++)
@@ -76,8 +76,6 @@ public:
 			map[TRICORE_REG_D(i)] = regD[i];
 		}
 		map[TRICORE_REG_PSW] = &regPSW;
-		map[TRICORE_REG_PC] = &regPC;
-		map[TRICORE_REG_FCX] = &regFCX;
 	}
 
 	inline hard::Register *operator[](int i) const { return map[i]; }

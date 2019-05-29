@@ -125,7 +125,7 @@ public:
 	virtual t::uint32 size() const { return _size; }
 	virtual Process &process() { return proc; }
 
-	virtual const elm::genstruct::Table<hard::Register *>& readRegs() {
+	virtual const AllocArray<hard::Register *>& readRegs() override {
 		if (!isRegsDone) {
 			decodeRegs();
 			isRegsDone = true;
@@ -133,7 +133,7 @@ public:
 		return in_regs;
 	}
 
-	virtual const elm::genstruct::Table<hard::Register *>& writtenRegs() {
+	virtual const AllocArray<hard::Register *>& writtenRegs() override {
 		if(!isRegsDone) {
 			decodeRegs();
 			isRegsDone = true;
@@ -151,8 +151,8 @@ protected:
 private:
 	void decodeRegs(void);
 	kind_t _kind;
-	elm::genstruct::AllocatedTable<hard::Register *> in_regs;
-	elm::genstruct::AllocatedTable<hard::Register *> out_regs;
+	AllocArray<hard::Register *> in_regs;
+	AllocArray<hard::Register *> out_regs;
 	tricore_address_t _addr;
 	bool isRegsDone;
 	t::uint32 _size;
@@ -379,8 +379,8 @@ public:
 
 	// internal work
 	void decodeRegs(Inst *oinst,
-		elm::genstruct::AllocatedTable<hard::Register *>& in,
-		elm::genstruct::AllocatedTable<hard::Register *>& out)
+		AllocArray<hard::Register *>& in,
+		AllocArray<hard::Register *>& out)
 	{
 		// Decode instruction
 		tricore_inst_t *inst = decode_raw(oinst->address());
@@ -407,10 +407,10 @@ public:
 		}
 
 		// store results
-		in.allocate(reg_in.length());
+		in = AllocArray<hard::Register *>(reg_in.length());
 		for(int i = 0 ; i < reg_in.length(); i++)
 			in.set(i, reg_in.get(i));
-		out.allocate(reg_out.length());
+		out = AllocArray<hard::Register *>(reg_out.length());
 		for (int i = 0 ; i < reg_out.length(); i++)
 			out.set(i, reg_out.get(i));
 
@@ -463,7 +463,7 @@ public:
 	inline tricore_decoder_t *decoder() const { return _decoder; }
 	inline void *platform(void) const { return _platform; }
 
-	virtual Option<Pair<cstring, int> > getSourceLine(Address addr) throw (UnsupportedFeatureException) {
+	virtual Option<Pair<cstring, int> > getSourceLine(Address addr) override {
 		setup_debug();
 		if (!map)
 			return none;
@@ -474,7 +474,7 @@ public:
 		return some(pair(cstring(file), line));
 	}
 
-	virtual void getAddresses(cstring file, int line, Vector<Pair<Address, Address> >& addresses) throw (UnsupportedFeatureException) {
+	virtual void getAddresses(cstring file, int line, Vector<Pair<Address, Address> >& addresses) override {
 		setup_debug();
 		addresses.clear();
 		if (!map)
@@ -623,7 +623,7 @@ otawa::Inst *Segment::decode(address_t address) {
 }
 
 
-static void tricore_sem(tricore_inst_t *inst, otawa::sem::Block& block);
+static void tricore_sem(tricore_inst_t *inst, otawa::sem::Block& block); // @suppress("Unused function declaration")
 
 
 /**

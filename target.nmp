@@ -8,7 +8,10 @@ extend call16
 	otawa_target = target // __IADDR + coerce(int(32),const)*2
 
 extend calla , fcalla
-	otawa_target = target // const<23..20>::0b0000000::const<19..0>::0b0
+	disp = d2::d1
+	otawa_target = disp<23..20> :: 0b0000000 :: disp<19..0> :: 0b0 
+	//otawa_target = disp24
+	//// const<23..20>::0b0000000::const<19..0>::0b0
 
 extend ja , jla
 	otawa_target = const<23..20>::0b0000000::const<19..0>::0b0

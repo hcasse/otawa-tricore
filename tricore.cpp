@@ -392,8 +392,8 @@ public:
 		// get register infos
 		tricore_used_regs_read_t rds;
 		tricore_used_regs_write_t wrs;
-		elm::genstruct::Vector<hard::Register *> reg_in;
-		elm::genstruct::Vector<hard::Register *> reg_out;
+		Vector<hard::Register *> reg_in;
+		Vector<hard::Register *> reg_out;
 		tricore_used_regs(inst, rds, wrs);
 		for (int i = 0; rds[i] != -1; i++ ) {
 			hard::Register *r = register_decoder[rds[i]];
